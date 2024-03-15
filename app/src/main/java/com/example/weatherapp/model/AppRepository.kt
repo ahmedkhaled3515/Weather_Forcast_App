@@ -2,6 +2,7 @@ package com.example.weatherapp.model
 
 import com.example.weatherapp.network.IRemoteDataSource
 import com.example.weatherapp.network.RemoteDataSource
+import okhttp3.ResponseBody
 
 object AppRepository {
     var remoteDataSource: IRemoteDataSource = RemoteDataSource()
@@ -12,6 +13,10 @@ object AppRepository {
     suspend fun getFiveDayForecast(lat:Double,lon:Double,apiKey:String):ForecastResponse
     {
         return remoteDataSource.getFiveDayForecast(lat,lon,apiKey)
+    }
+    suspend fun getOneCall(lat: Double,lon: Double,apiKey: String) : ResponseBody
+    {
+        return remoteDataSource.getOneCall(lat,lon,apiKey)
     }
 
 }

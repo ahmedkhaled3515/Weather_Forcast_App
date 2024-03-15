@@ -19,6 +19,14 @@ interface ApiServices {
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
         @Query("appid") apiKey: String,
-        @Query("units") units: String = "metric"
+        @Query("units") units: String = "metric",
+        @Query("cnt") cnt:Int = 8
     ): ForecastResponse
+    @GET("onecall")
+    suspend fun getOneCall(
+        @Query("lat") lat: Double,
+        @Query("lon") lon: Double,
+        @Query("appid") apiKey: String,
+        @Query("units") units: String = "metric"
+    ):ResponseBody
 }
