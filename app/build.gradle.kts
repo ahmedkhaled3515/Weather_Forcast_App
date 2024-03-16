@@ -36,6 +36,8 @@ android {
 }
 
 dependencies {
+    //LocationServices
+    implementation ("com.google.android.gms:play-services-location:21.2.0")
     //glide
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.13.0")
