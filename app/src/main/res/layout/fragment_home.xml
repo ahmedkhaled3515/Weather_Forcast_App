@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#F6EDFF"
+        android:visibility="visible"
         tools:context=".views.HomeFragment">
 
 
@@ -35,6 +36,7 @@
             app:cardCornerRadius="33dp"
             app:cardElevation="15dp"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -85,6 +87,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
@@ -92,13 +95,14 @@
             android:id="@+id/cardView2"
             android:layout_width="160dp"
             android:layout_height="65dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="15dp"
             android:background="@color/cards_pink"
             android:backgroundTint="@color/cards_pink"
             app:cardCornerRadius="20dp"
+            app:layout_constraintEnd_toStartOf="@+id/cardView3"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
-            app:layout_constraintTop_toBottomOf="@+id/hour_recycler_view">
+            app:layout_constraintTop_toBottomOf="@id/days_RV">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -135,6 +139,7 @@
                     android:textSize="12sp"
                     app:layout_constraintStart_toEndOf="@+id/imageView"
                     app:layout_constraintTop_toBottomOf="@+id/wind" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
@@ -142,14 +147,14 @@
             android:id="@+id/cardView3"
             android:layout_width="160dp"
             android:layout_height="65dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="15dp"
+            android:layout_marginTop="15dp"
             android:background="@color/cards_pink"
             android:backgroundTint="@color/cards_pink"
             app:cardCornerRadius="20dp"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toBottomOf="@+id/hour_recycler_view">
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/cardView2"
+            app:layout_constraintTop_toBottomOf="@id/days_RV">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -187,6 +192,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/img_3" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
@@ -287,6 +293,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/img_2" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
@@ -299,7 +306,27 @@
             app:layout_constraintHorizontal_bias="0.513"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toBottomOf="@+id/cardView"
-            tools:listitem="@layout/recycler_view_item" />
+            tools:layoutManager="GridLayoutManager"
+            tools:listitem="@layout/recycler_view_item"
+            tools:spanCount="5" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/days_RV"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            app:layout_constraintTop_toBottomOf="@+id/hour_recycler_view" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

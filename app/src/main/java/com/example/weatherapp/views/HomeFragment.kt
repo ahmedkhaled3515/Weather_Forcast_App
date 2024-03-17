@@ -14,9 +14,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -52,7 +54,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class HomeFragment : Fragment() {
-
+    private lateinit var layout: ConstraintLayout
     val API_KEY="172e0cbb3264b27530f5b6c425ffb29d"
     var currentLat:Double?=null
     var currentLon:Double?=null
@@ -76,7 +78,11 @@ class HomeFragment : Fragment() {
     private lateinit var humidityTV:TextView
     private lateinit var viewModel:CurrentForecastViewModel
     private lateinit var hourlyRV:RecyclerView
+    private lateinit var dailyRV:RecyclerView
     private lateinit var locationText:TextView
+    var currentSuccess:Boolean?=false
+    var fiveSuccess:Boolean?=false
+    lateinit var progress:ProgressBar
 
     private fun initializeComponents(view: View)
     {
@@ -89,6 +95,9 @@ class HomeFragment : Fragment() {
         hourlyRV=view.findViewById(R.id.hour_recycler_view)
         weatherIcon=view.findViewById(R.id.weather_image)
         locationText=view.findViewById(R.id.location_textview)
+        dailyRV=view.findViewById(R.id.days_RV)
+        layout=view.findViewById(R.id.frameLayout)
+        progress=view.findViewById(R.id.progress_bar)
     }
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -100,13 +109,23 @@ class HomeFragment : Fragment() {
                 when(it)
                 {
                     is ApiState.Success ->{
+                        isSameDay(it.data.dt)
                         setUiComponents(it.data)
+                        currentSuccess=true
+                        if( fiveSuccess == true)
+                        {
+                            layout.visibility=View.VISIBLE
+                            progress.visibility=View.GONE
+                        }
                     }
                     is ApiState.Failure ->{
                         Toast.makeText(requireActivity(), "Failed", Toast.LENGTH_SHORT).show()
                     }
                     else -> {
                         Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
+                        layout.visibility=View.GONE
+                        progress.visibility=View.VISIBLE
+
                     }
                 }
             }
@@ -117,13 +136,21 @@ class HomeFragment : Fragment() {
             {
                 when(it){
                     is ApiState.Success -> {
+                        val newList= it.data.list.take(8)
                         Log.i("TAG", "onViewCreated2:${it} ")
                         hourlyRV.apply {
                             layoutManager=LinearLayoutManager(requireContext()).apply {
                                 orientation=LinearLayoutManager.HORIZONTAL
                             }
                             adapter = HourlyForecastListAdapter(requireContext()).apply {
-                                submitList(it.data.list)
+                                submitList(newList)
+                            }
+                            fiveSuccess=true
+                            if(currentSuccess == true)
+                            {
+                                layout.visibility=View.VISIBLE
+                                progress.visibility=View.GONE
+
                             }
                         }
                     }
@@ -133,12 +160,63 @@ class HomeFragment : Fragment() {
                     }
                     else -> {
                         Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
+                        layout.visibility= View.GONE
+                        progress.visibility=View.VISIBLE
+
                     }
                 }
             }
         }
+        lifecycleScope.launch {
+            viewModel.fiveForecast
+                .collect()
+                {
+                    when(it){
+                        is ApiState.Success -> {
+                            val newList= it.data.list.distinctBy {
+                                forecast ->
+                                val calendar=Calendar.getInstance()
+                                calendar.timeInMillis= forecast.dt*1000
+                                calendar.get(Calendar.DATE)
+                            }
+                            dailyRV.apply {
+                                layoutManager=LinearLayoutManager(this.context).apply {
+                                    orientation=LinearLayoutManager.VERTICAL
+                                }
+                                adapter=FiveDaysForecastAdapter(this.context).apply {
+                                    submitList(newList)
+                                }
+                            }
+                            fiveSuccess=true
+                            if(currentSuccess == true)
+                            {
+                                layout.visibility=View.VISIBLE
+                                progress.visibility=View.GONE
+
+                            }
+                            Log.i("TAG", "onViewCreated4:${newList} ")
+
+                        }
+                        is ApiState.Failure ->{
+                            Toast.makeText(requireActivity(),"Failed",Toast.LENGTH_SHORT).show()
+                            it.msg.printStackTrace()
+                        }
+                        else -> {
+                            Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
+                            layout.visibility=View.GONE
+                            progress.visibility=View.VISIBLE
+                        }
+                    }
+                }
+        }
 
 
+    }
+    private fun isSameDay(timestamp: Long) : Boolean{
+        val calendar=Calendar.getInstance()
+        calendar.timeInMillis=timestamp*1000
+        Log.i("TAG", "isSameDay: ${calendar.time}")
+        return Calendar.getInstance().get(Calendar.DATE) == calendar.get(Calendar.DATE)
     }
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     @SuppressLint("SetTextI18n")
@@ -155,6 +233,10 @@ class HomeFragment : Fragment() {
         Glide.with(this)
             .load("https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png")
             .into(weatherIcon)
+    }
+    private fun hideUi()
+    {
+
     }
     fun timestampToDate(timestamp: Long): Date {
         // Convert seconds to milliseconds

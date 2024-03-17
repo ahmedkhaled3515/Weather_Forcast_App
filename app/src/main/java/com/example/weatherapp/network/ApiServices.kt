@@ -21,7 +21,6 @@ interface ApiServices {
         @Query("lon") lon: Double,
         @Query("appid") apiKey: String,
         @Query("units") units: String = "metric",
-        @Query("cnt") cnt:Int = 8
     ): ForecastResponse
     @GET("forecast/daily")
     suspend fun getDailyForecast(
