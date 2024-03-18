@@ -1,5 +1,8 @@
 package com.example.weatherapp.ViewModel
 
+import android.app.Application
+import android.content.Context
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -22,8 +25,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 
-class CurrentForecastViewModel private constructor() : ViewModel() {
-    private val appRepo=AppRepository
+class CurrentForecastViewModel (application: Application) : AndroidViewModel(application) {
+    private val appRepo=AppRepository.getInstance(application.applicationContext)
     private var _forecast = MutableStateFlow<ApiState<Forecast>>(ApiState.Loading)
     var forecast = _forecast.asStateFlow()
     private var _fiveForecast = MutableStateFlow<ApiState<ForecastResponse>>(ApiState.Loading)

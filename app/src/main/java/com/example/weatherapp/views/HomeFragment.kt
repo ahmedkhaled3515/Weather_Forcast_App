@@ -2,6 +2,8 @@ package com.example.weatherapp.views
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
@@ -20,14 +22,19 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weatherapp.ApiState
 import com.example.weatherapp.R
 import com.example.weatherapp.ViewModel.CurrentForecastViewModel
+import com.example.weatherapp.database.LocalDataSource
 import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.Forecast
 import com.google.android.gms.location.LocationCallback
@@ -42,20 +49,13 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import kotlin.math.log
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class HomeFragment : Fragment() {
+    private lateinit var sharedPreferences: SharedPreferences
+    companion object{
+          const val API_KEY="172e0cbb3264b27530f5b6c425ffb29d"
+    }
     private lateinit var layout: ConstraintLayout
-    val API_KEY="172e0cbb3264b27530f5b6c425ffb29d"
+
     var currentLat:Double?=null
     var currentLon:Double?=null
     override fun onCreateView(
@@ -65,9 +65,8 @@ class HomeFragment : Fragment() {
         // Inflate the layout for this fragment
 //        getLocation()
         getLocation()
-
+        sharedPreferences = requireActivity().getSharedPreferences("myShared",Context.MODE_PRIVATE)
         return inflater.inflate(R.layout.fragment_home, container, false)
-
     }
     private lateinit var weatherIcon:ImageView
     private lateinit var currentDegreeTV:TextView
@@ -76,13 +75,13 @@ class HomeFragment : Fragment() {
     private lateinit var rainChanceTV:TextView
     private lateinit var pressureTV:TextView
     private lateinit var humidityTV:TextView
-    private lateinit var viewModel:CurrentForecastViewModel
+    private val viewModel:CurrentForecastViewModel by activityViewModels()
     private lateinit var hourlyRV:RecyclerView
     private lateinit var dailyRV:RecyclerView
     private lateinit var locationText:TextView
-    var currentSuccess:Boolean?=false
-    var fiveSuccess:Boolean?=false
-    lateinit var progress:ProgressBar
+    private var currentSuccess:Boolean?=false
+    private var fiveSuccess:Boolean?=false
+    private lateinit var progress:ProgressBar
 
     private fun initializeComponents(view: View)
     {
@@ -102,112 +101,122 @@ class HomeFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         initializeComponents(view)
-
-        viewModel= ViewModelProvider(this)[CurrentForecastViewModel::class.java]
-        lifecycleScope.launch {
-            viewModel.forecast.collect(){
-                when(it)
-                {
-                    is ApiState.Success ->{
-                        isSameDay(it.data.dt)
-                        setUiComponents(it.data)
-                        currentSuccess=true
-                        if( fiveSuccess == true)
-                        {
-                            layout.visibility=View.VISIBLE
-                            progress.visibility=View.GONE
-                        }
-                    }
-                    is ApiState.Failure ->{
-                        Toast.makeText(requireActivity(), "Failed", Toast.LENGTH_SHORT).show()
-                    }
-                    else -> {
-                        Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
-                        layout.visibility=View.GONE
-                        progress.visibility=View.VISIBLE
-
-                    }
-                }
-            }
-        }
-        lifecycleScope.launch {
-            viewModel.fiveForecast
-                .collect()
-            {
-                when(it){
-                    is ApiState.Success -> {
-                        val newList= it.data.list.take(8)
-                        Log.i("TAG", "onViewCreated2:${it} ")
-                        hourlyRV.apply {
-                            layoutManager=LinearLayoutManager(requireContext()).apply {
-                                orientation=LinearLayoutManager.HORIZONTAL
-                            }
-                            adapter = HourlyForecastListAdapter(requireContext()).apply {
-                                submitList(newList)
-                            }
-                            fiveSuccess=true
-                            if(currentSuccess == true)
+        val localDataSource = LocalDataSource(requireActivity())
+//        viewModel= ViewModelProvider(this)[CurrentForecastViewModel::class.java]
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.forecast.collect(){
+                    when(it)
+                    {
+                        is ApiState.Success ->{
+                            isSameDay(it.data.dt)
+                            setUiComponents(it.data)
+                            currentSuccess=true
+                            if( fiveSuccess == true)
                             {
                                 layout.visibility=View.VISIBLE
                                 progress.visibility=View.GONE
-
                             }
-                        }
-                    }
-                    is ApiState.Failure ->{
-                        Toast.makeText(requireActivity(),"Failed",Toast.LENGTH_SHORT).show()
-                        it.msg.printStackTrace()
-                    }
-                    else -> {
-                        Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
-                        layout.visibility= View.GONE
-                        progress.visibility=View.VISIBLE
-
-                    }
-                }
-            }
-        }
-        lifecycleScope.launch {
-            viewModel.fiveForecast
-                .collect()
-                {
-                    when(it){
-                        is ApiState.Success -> {
-                            val newList= it.data.list.distinctBy {
-                                forecast ->
-                                val calendar=Calendar.getInstance()
-                                calendar.timeInMillis= forecast.dt*1000
-                                calendar.get(Calendar.DATE)
-                            }
-                            dailyRV.apply {
-                                layoutManager=LinearLayoutManager(this.context).apply {
-                                    orientation=LinearLayoutManager.VERTICAL
-                                }
-                                adapter=FiveDaysForecastAdapter(this.context).apply {
-                                    submitList(newList)
-                                }
-                            }
-                            fiveSuccess=true
-                            if(currentSuccess == true)
-                            {
-                                layout.visibility=View.VISIBLE
-                                progress.visibility=View.GONE
-
-                            }
-                            Log.i("TAG", "onViewCreated4:${newList} ")
-
                         }
                         is ApiState.Failure ->{
-                            Toast.makeText(requireActivity(),"Failed",Toast.LENGTH_SHORT).show()
-                            it.msg.printStackTrace()
+                            Toast.makeText(requireActivity(), "Failed", Toast.LENGTH_SHORT).show()
                         }
                         else -> {
                             Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
                             layout.visibility=View.GONE
                             progress.visibility=View.VISIBLE
+
                         }
                     }
                 }
+            }
+
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED)
+            {
+                viewModel.fiveForecast
+                    .collect()
+                    {
+                        when(it){
+                            is ApiState.Success -> {
+                                val newList= it.data.list.take(8)
+                                Log.i("TAG", "onViewCreated2:${it} ")
+                                hourlyRV.apply {
+                                    layoutManager=LinearLayoutManager(requireContext()).apply {
+                                        orientation=LinearLayoutManager.HORIZONTAL
+                                    }
+                                    adapter = HourlyForecastListAdapter(requireContext()).apply {
+                                        submitList(newList)
+                                    }
+                                    fiveSuccess=true
+                                    if(currentSuccess == true)
+                                    {
+                                        layout.visibility=View.VISIBLE
+                                        progress.visibility=View.GONE
+
+                                    }
+                                }
+                            }
+                            is ApiState.Failure ->{
+                                Toast.makeText(requireActivity(),"Failed",Toast.LENGTH_SHORT).show()
+                                it.msg.printStackTrace()
+                            }
+                            else -> {
+                                Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
+                                layout.visibility= View.GONE
+                                progress.visibility=View.VISIBLE
+
+                            }
+                        }
+                    }
+            }
+
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.fiveForecast
+                    .collect()
+                    {
+                        when(it){
+                            is ApiState.Success -> {
+                                val newList= it.data.list.distinctBy {
+                                        forecast ->
+                                    val calendar=Calendar.getInstance()
+                                    calendar.timeInMillis= forecast.dt*1000
+                                    calendar.get(Calendar.DATE)
+                                }
+                                dailyRV.apply {
+                                    layoutManager=LinearLayoutManager(this.context).apply {
+                                        orientation=LinearLayoutManager.VERTICAL
+                                    }
+                                    adapter=FiveDaysForecastAdapter(this.context).apply {
+                                        submitList(newList)
+                                    }
+                                }
+                                fiveSuccess=true
+                                if(currentSuccess == true)
+                                {
+                                    layout.visibility=View.VISIBLE
+                                    progress.visibility=View.GONE
+
+                                }
+                                Log.i("TAG", "onViewCreated4:${newList} ")
+
+                            }
+                            is ApiState.Failure ->{
+                                Toast.makeText(requireActivity(),"Failed",Toast.LENGTH_SHORT).show()
+                                it.msg.printStackTrace()
+                            }
+                            else -> {
+                                Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
+                                layout.visibility=View.GONE
+                                progress.visibility=View.VISIBLE
+                            }
+                        }
+                    }
+            }
+
         }
 
 
@@ -243,15 +252,6 @@ class HomeFragment : Fragment() {
         val milliseconds = timestamp * 1000
         return Date(milliseconds)
     }
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    private fun getAddressWithCoordinates(lat:Double, lon:Double)
-    {
-        val geocoder= Geocoder(requireContext(), Locale.getDefault())
-        geocoder.getFromLocation(lat,lon,1, Geocoder.GeocodeListener {
-            val address=it[0]
-            locationText.text=address.getAddressLine(0)
-        })
-    }
     private fun getLocation()
     {
         val fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -266,7 +266,10 @@ class HomeFragment : Fragment() {
                 currentLat=location.lastLocation?.latitude
                 viewModel.getCurrentForecast(currentLat!!,currentLon!!, API_KEY)
                 viewModel.getFiveForecast(currentLat!!,currentLon!!,API_KEY )
-
+                val editor = sharedPreferences.edit()
+                editor.putFloat("currentLon",currentLon!!.toFloat())
+                editor.putFloat("currentLat",currentLat!!.toFloat())
+                editor.apply()
             }
         }
         if (ActivityCompat.checkSelfPermission(

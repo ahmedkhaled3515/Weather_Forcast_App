@@ -8,4 +8,11 @@
     </style>
 
     <style name="Theme.WeatherApp" parent="Base.Theme.WeatherApp" />
+    <style name="CustomAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">@color/customDialogBackground</item>
+        <item name="android:textColorPrimary">@color/customDialogTitle</item>
+        <item name="android:textColor">@color/customDialogText</item>
+        <item name="colorAccent">@color/customDialogButtonPositive</item>
+        <item name="android:textColorSecondary">@color/customDialogButtonNegative</item>
+    </style>
 </resources>
