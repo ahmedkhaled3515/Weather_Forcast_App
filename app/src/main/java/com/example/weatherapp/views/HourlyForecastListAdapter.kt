@@ -15,18 +15,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
-import com.example.weatherapp.model.Forecast
-import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDateTime
+import com.example.weatherapp.model.DailyWeather
+import com.example.weatherapp.model.HourlyWeather
 import java.time.LocalTime
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
-import kotlin.math.log
 
-class HourlyForecastListAdapter(val context: Context) : ListAdapter<Forecast,HourlyForecastListAdapter.ViewHolder>(ForecastDiffUtil()) {
+class HourlyForecastListAdapter(val context: Context) : ListAdapter<HourlyWeather,HourlyForecastListAdapter.ViewHolder>(HourlyWeatherDiffUtil()) {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val timeTV:TextView=view.findViewById(R.id.time_value_text)
         val timeIcon:ImageView=view.findViewById(R.id.time_icon)
@@ -44,7 +40,7 @@ class HourlyForecastListAdapter(val context: Context) : ListAdapter<Forecast,Hou
         setCardContent(holder,forecast)
     }
     @SuppressLint("SetTextI18n")
-    private fun setCardContent(holder:HourlyForecastListAdapter.ViewHolder, forecast: Forecast)
+    private fun setCardContent(holder:HourlyForecastListAdapter.ViewHolder, forecast: HourlyWeather)
     {
         var date = timestampToDate(forecast.dt)
         val calendar=Calendar.getInstance()
@@ -64,11 +60,18 @@ class HourlyForecastListAdapter(val context: Context) : ListAdapter<Forecast,Hou
 
         }
         Log.i("TAG", "onBindViewHolder: ${forecast.dt}")
-        holder.hourlyDegree.text= "${forecast.main.temp}°C"
-        holder.timeTV.text="${calendar.get(Calendar.HOUR)} $period"
+        holder.hourlyDegree.text= "${forecast.temp}°C"
+        holder.timeTV.text= if(calendar.get(Calendar.HOUR) == 0)
+        {
+           "12 $period"
+        }
+        else{
+             "${calendar.get(Calendar.HOUR)} $period"
+        }
         Glide.with(context)
             .load("https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png")
             .into(holder.timeIcon)
+//        ${calendar.get(Calendar.HOUR)} $period
     }
 }
 
@@ -93,12 +96,21 @@ fun hourConverter(time:String) {
     Log.i("TAG", "Converted time: $formattedTime") // Output: Converted time: 01:30 PM
 }
 
-class ForecastDiffUtil : DiffUtil.ItemCallback<Forecast>() {
-    override fun areItemsTheSame(oldItem: Forecast, newItem: Forecast): Boolean {
-        return oldItem.id == newItem.id
+class DailyWeatherDiffUtil : DiffUtil.ItemCallback<DailyWeather>() {
+    override fun areItemsTheSame(oldItem: DailyWeather, newItem: DailyWeather): Boolean {
+        return oldItem == newItem
     }
 
-    override fun areContentsTheSame(oldItem: Forecast, newItem: Forecast): Boolean {
+    override fun areContentsTheSame(oldItem: DailyWeather, newItem: DailyWeather): Boolean {
+        return oldItem == newItem
+    }
+
+}class HourlyWeatherDiffUtil : DiffUtil.ItemCallback<HourlyWeather>() {
+    override fun areItemsTheSame(oldItem: HourlyWeather, newItem: HourlyWeather): Boolean {
+        return oldItem == newItem
+    }
+
+    override fun areContentsTheSame(oldItem: HourlyWeather, newItem: HourlyWeather): Boolean {
         return oldItem == newItem
     }
 

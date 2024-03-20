@@ -29,17 +29,25 @@ class AppRepository private constructor(val context: Context): IAppRepository {
     }
     private var remoteDataSource: IRemoteDataSource = RemoteDataSource()
     private var localDataSource : ILocalDataSource = LocalDataSource(context)
-    override suspend fun getCurrentForecast(lat:Double, lon:Double, apiKey:String): Flow<Forecast>
-    {
-        return remoteDataSource.getCurrentForecast(lat,lon,apiKey)
-    }
-    override suspend fun getFiveDayForecast(lat:Double, lon:Double, apiKey:String): Flow<ForecastResponse>
+//    override suspend fun getCurrentForecast(lat:Double, lon:Double, apiKey:String): Flow<Forecast>
+//    {
+//        return remoteDataSource.getCurrentForecast(lat,lon,apiKey)
+//    }
+    override suspend fun getFiveDayForecast(lat:Double, lon:Double, apiKey:String): Flow<WeatherResponse>
     {
         return remoteDataSource.getFiveDayForecast(lat,lon,apiKey)
     }
-    override suspend fun getDailyForecast(lat: Double, lon: Double, apiKey: String) : ForecastResponse
+    override suspend fun getDailyForecast(lat: Double, lon: Double, apiKey: String) : WeatherResponse
     {
         return remoteDataSource.getDailyForecast(lat,lon,apiKey)
+    }
+
+    override suspend fun getAllForecastData(
+        lat: Double,
+        lon: Double,
+        apiKey: String
+    ): Flow<WeatherResponse> {
+        return remoteDataSource.getAllForecastData(lat, lon, apiKey)
     }
 
     override suspend fun getAllFavorites(): Flow<List<FavoriteCoordinate>> {

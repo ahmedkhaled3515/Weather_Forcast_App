@@ -1,30 +1,17 @@
 package com.example.weatherapp.views
-
 import android.app.AlertDialog
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
-import android.location.Geocoder.GeocodeListener
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FavoriteCardLayoutBinding
-import com.example.weatherapp.databinding.RecyclerViewItemBinding
 import com.example.weatherapp.model.FavoriteCoordinate
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.io.IOException
-import kotlin.math.log
-
 class FavoriteAdapter(val context: Context , val removeLocation: (coord:FavoriteCoordinate)-> Unit) : ListAdapter<FavoriteCoordinate,FavoriteAdapter.ViewHolder>(FavoriteCoordinateDiffUtil()) {
     class ViewHolder(val binding: FavoriteCardLayoutBinding ) : RecyclerView.ViewHolder(binding.root){
 
@@ -78,7 +65,7 @@ class FavoriteCoordinateDiffUtil : DiffUtil.ItemCallback<FavoriteCoordinate>() {
     }
 }
     private fun showAlertDialog(favoriteCoordinate: FavoriteCoordinate) {
-        AlertDialog.Builder(context, R.style.CustomAlertDialogStyle)
+        AlertDialog.Builder(context)
             .setTitle("Alert Title")
             .setMessage("Are you sure you want to remove this location")
             .setPositiveButton("OK") { dialog, which ->
