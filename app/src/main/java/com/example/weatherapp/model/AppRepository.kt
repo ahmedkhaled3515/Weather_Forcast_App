@@ -62,4 +62,16 @@ class AppRepository private constructor(val context: Context): IAppRepository {
         localDataSource.deleteFavorite(coordinate)
     }
 
+    override suspend fun getAllAlerts(): Flow<List<LocationAlert>> {
+        return localDataSource.getAllAlerts()
+    }
+
+    override suspend fun addAlert(locationAlert: LocationAlert) {
+        localDataSource.addAlert(locationAlert)
+    }
+
+    override suspend fun deleteAlert(locationAlert: LocationAlert) {
+        localDataSource.deleteAlert(locationAlert)
+    }
+
 }

@@ -29,7 +29,7 @@ class FavoriteAdapter(val context: Context , val removeLocation: (coord:Favorite
         val favoriteCoordinate  = getItem(position)
         val address = coordToString(favoriteCoordinate,binding)
         binding.favoriteLocationName.text="${address?.locality}, ${address?.adminArea}, ${address?.countryName}"
-        binding.removeButton.setOnClickListener(){
+        binding.favoritRemoveButton.setOnClickListener(){
             showAlertDialog(favoriteCoordinate)
         }
     }
@@ -47,7 +47,7 @@ class FavoriteAdapter(val context: Context , val removeLocation: (coord:Favorite
             }
         return address
 
-}
+    }
 
 class FavoriteCoordinateDiffUtil : DiffUtil.ItemCallback<FavoriteCoordinate>() {
     override fun areItemsTheSame(

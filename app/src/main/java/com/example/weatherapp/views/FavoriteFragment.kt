@@ -60,7 +60,9 @@ class FavoriteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         navController = Navigation.findNavController(view)
         binding.addFab.setOnClickListener {
-            navController.navigate(R.id.action_favoriteFragment_to_mapsFragment)
+            val bundle = Bundle()
+            bundle.putString("sourceFragment","favorite")
+            navController.navigate(R.id.action_favoriteFragment_to_mapsFragment,bundle)
         }
         setRecyclerView()
     }

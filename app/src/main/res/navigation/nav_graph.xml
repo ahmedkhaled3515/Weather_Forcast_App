@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment">
+    app:startDestination="@id/alertFragment">
 
     <fragment
         android:id="@+id/homeFragment"
@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_homeFragment_to_favoriteFragment"
             app:destination="@id/favoriteFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_alertFragment"
+            app:destination="@id/alertFragment" />
     </fragment>
     <fragment
         android:id="@+id/mapsFragment"
@@ -20,6 +23,9 @@
         <action
             android:id="@+id/action_mapsFragment_to_favoriteFragment"
             app:destination="@id/favoriteFragment" />
+        <action
+            android:id="@+id/action_mapsFragment_to_alertFragment"
+            app:destination="@id/alertFragment" />
     </fragment>
     <fragment
         android:id="@+id/favoriteFragment"
@@ -32,5 +38,17 @@
         <action
             android:id="@+id/action_favoriteFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_favoriteFragment_to_alertFragment"
+            app:destination="@id/alertFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/alertFragment"
+        android:name="com.example.weatherapp.views.AlertFragment"
+        android:label="fragment_alert"
+        tools:layout="@layout/fragment_alert" >
+        <action
+            android:id="@+id/action_alertFragment_to_mapsFragment"
+            app:destination="@id/mapsFragment" />
     </fragment>
 </navigation>
