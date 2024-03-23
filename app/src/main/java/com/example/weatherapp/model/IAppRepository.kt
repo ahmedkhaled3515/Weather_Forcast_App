@@ -15,4 +15,5 @@ interface IAppRepository {
     suspend fun  getAllAlerts() : Flow<List<LocationAlert>>
     suspend fun  addAlert(locationAlert: LocationAlert)
     suspend fun deleteAlert(locationAlert: LocationAlert)
+    suspend fun deleteAlertById(id:Int)
 }

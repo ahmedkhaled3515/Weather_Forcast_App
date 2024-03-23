@@ -14,9 +14,15 @@
         android:icon="@drawable/favorite"
         />
     <item
+        android:title="@string/alerts"
+        android:id="@+id/alertFragment"
+        android:icon="@drawable/alert"
+        />
+    <item
         android:title="@string/settings_text"
         android:id="@+id/settings"
         android:icon="@drawable/settings_icon"
         />
+
 
 </menu>

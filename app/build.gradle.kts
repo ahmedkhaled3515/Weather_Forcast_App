@@ -44,7 +44,10 @@ android {
 
 
 dependencies {
-
+    //AndroidX
+//    implementation("androidx.core:core-ktx:2.2.0")
+    //WorkManager
+    implementation ("androidx.work:work-runtime:2.9.0")
     //Room DataBase
     implementation ("androidx.room:room-runtime:2.6.1")
     kapt ("androidx.room:room-compiler:2.6.1")

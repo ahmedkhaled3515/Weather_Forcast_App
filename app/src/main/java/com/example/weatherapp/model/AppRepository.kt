@@ -74,4 +74,8 @@ class AppRepository private constructor(val context: Context): IAppRepository {
         localDataSource.deleteAlert(locationAlert)
     }
 
+    override suspend fun deleteAlertById(id: Int) {
+        localDataSource.deleteAlertById(id)
+    }
+
 }

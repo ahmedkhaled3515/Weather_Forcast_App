@@ -6,4 +6,5 @@
     <string name="settings_text">settings</string>
     <string name="favorite_text">favorite</string>
     <string name="home_text">Home</string>
+    <string name="alerts">alerts</string>
 </resources>

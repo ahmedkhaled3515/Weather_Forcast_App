@@ -16,4 +16,6 @@ interface AlertDao {
     fun addAlert(locationAlert: LocationAlert)
     @Delete
     fun deleteAlert(locationAlert: LocationAlert)
+    @Query("DELETE FROM location_alert WHERE id = :alertId")
+    fun deleteAlertById(alertId: Int)
 }

@@ -108,11 +108,10 @@ class HomeFragment : Fragment() {
                         }
                         is ApiState.Failure ->{
                             Toast.makeText(requireActivity(), "Failed", Toast.LENGTH_SHORT).show()
+                            it.msg.printStackTrace()
                         }
                         else -> {
                             Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
-
-
                         }
                     }
                 }

@@ -30,4 +30,8 @@ class LocalDataSource(context: Context) : ILocalDataSource {
     override suspend fun deleteAlert(locationAlert: LocationAlert) {
         alertDao.deleteAlert(locationAlert)
     }
+
+    override suspend fun deleteAlertById(id: Int) {
+        alertDao.deleteAlertById(id)
+    }
 }

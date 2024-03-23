@@ -41,4 +41,10 @@ class AlertViewModel(application: Application) : AndroidViewModel(application) {
         }
         getAllAlerts()
     }
+    fun deleteAlertById(id:Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            appRepo.deleteAlertById(id)
+        }
+        getAllAlerts()
+    }
 }
