@@ -1,4 +1,4 @@
-package com.example.weatherapp.views
+package com.example.weatherapp.views.home
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -22,7 +22,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 
-class HourlyForecastListAdapter(val context: Context) : ListAdapter<HourlyWeather,HourlyForecastListAdapter.ViewHolder>(HourlyWeatherDiffUtil()) {
+class HourlyForecastListAdapter(val context: Context) : ListAdapter<HourlyWeather, HourlyForecastListAdapter.ViewHolder>(
+    HourlyWeatherDiffUtil()
+) {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val timeTV:TextView=view.findViewById(R.id.time_value_text)
         val timeIcon:ImageView=view.findViewById(R.id.time_icon)
@@ -40,7 +42,7 @@ class HourlyForecastListAdapter(val context: Context) : ListAdapter<HourlyWeathe
         setCardContent(holder,forecast)
     }
     @SuppressLint("SetTextI18n")
-    private fun setCardContent(holder:HourlyForecastListAdapter.ViewHolder, forecast: HourlyWeather)
+    private fun setCardContent(holder: ViewHolder, forecast: HourlyWeather)
     {
         var date = timestampToDate(forecast.dt)
         val calendar=Calendar.getInstance()

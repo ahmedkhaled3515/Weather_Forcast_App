@@ -33,9 +33,9 @@ class CurrentForecastViewModel (application: Application) : AndroidViewModel(app
 //            }
 //        }
 //    }
-    fun getForecastResponse(lat: Double,lon: Double,apiKey: String){
+    fun getForecastResponse(lat: Double,lon: Double,apiKey: String,units:String,lang:String){
         viewModelScope.launch {
-            appRepo.getAllForecastData(lat, lon, apiKey)
+            appRepo.getAllForecastData(lat, lon, apiKey,units,lang)
                 .catch {
                     _forecast.value= ApiState.Failure(it)
                 }

@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:background="#F6EDFF"
         android:visibility="visible"
-        tools:context=".views.HomeFragment">
+        tools:context=".views.home.HomeFragment">
 
 
         <androidx.constraintlayout.widget.Guideline

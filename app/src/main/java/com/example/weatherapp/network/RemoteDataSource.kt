@@ -29,10 +29,12 @@ class RemoteDataSource : IRemoteDataSource {
     override suspend fun getAllForecastData(
         lat: Double,
         lon: Double,
-        apiKey: String
+        apiKey: String,
+        metric : String,
+        lang : String
     ): Flow<WeatherResponse> {
         return flow {
-            val forecastResponse = apiServices.getOneApi(lat, lon, apiKey)
+            val forecastResponse = apiServices.getOneApi(lat, lon, apiKey,metric,lang)
             emit(forecastResponse)
         }
     }

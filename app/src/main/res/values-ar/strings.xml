@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="hello_blank_fragment">اهلا</string>
+    <string name="remove_button_text">مسح</string>
+    <string name="settings_text">الاعدادات</string>
+    <string name="favorite_text">المفضلة</string>
+    <string name="home_text">الرئيسية</string>
+    <string name="alerts">الانذارات</string>
+    <string name="language_text">اللغة</string>
+    <string name="english_language_text">الانجليزية</string>
+    <string name="arabic_language_text">العربية</string>
+    <string name="temperature_text">الحرارة</string>
+    <string name="celsius_text">مئوية</string>
+    <string name="kelvin_text">كلفن</string>
+    <string name="fahrenheit_text">فهرنهايت</string>
+</resources>

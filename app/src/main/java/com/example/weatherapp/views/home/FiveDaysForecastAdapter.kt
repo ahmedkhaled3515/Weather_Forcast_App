@@ -1,4 +1,4 @@
-package com.example.weatherapp.views
+package com.example.weatherapp.views.home
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -11,12 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
 import com.example.weatherapp.model.DailyWeather
-import org.w3c.dom.Text
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class FiveDaysForecastAdapter(val context: Context) : ListAdapter<DailyWeather,FiveDaysForecastAdapter.ViewHolder>(DailyWeatherDiffUtil()) {
+class FiveDaysForecastAdapter(val context: Context) : ListAdapter<DailyWeather, FiveDaysForecastAdapter.ViewHolder>(
+    DailyWeatherDiffUtil()
+) {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view){
         val dayText:TextView = view.findViewById(R.id.day_name_text)
         val dayImage:ImageView = view.findViewById(R.id.day_image)
@@ -27,13 +28,13 @@ class FiveDaysForecastAdapter(val context: Context) : ListAdapter<DailyWeather,F
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): FiveDaysForecastAdapter.ViewHolder {
+    ): ViewHolder {
         val inflater= LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.days_card_layout,parent,false)
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: FiveDaysForecastAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val forecast= getItem(position)
         val calendar=Calendar.getInstance()
         calendar.timeInMillis= forecast.dt*1000

@@ -1,4 +1,4 @@
-package com.example.weatherapp.views
+package com.example.weatherapp.views.favorite
 import android.app.AlertDialog
 import android.content.Context
 import android.location.Address
@@ -12,19 +12,21 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.databinding.FavoriteCardLayoutBinding
 import com.example.weatherapp.model.FavoriteCoordinate
-class FavoriteAdapter(val context: Context , val removeLocation: (coord:FavoriteCoordinate)-> Unit) : ListAdapter<FavoriteCoordinate,FavoriteAdapter.ViewHolder>(FavoriteCoordinateDiffUtil()) {
+class FavoriteAdapter(val context: Context , val removeLocation: (coord:FavoriteCoordinate)-> Unit) : ListAdapter<FavoriteCoordinate, FavoriteAdapter.ViewHolder>(
+    FavoriteCoordinateDiffUtil()
+) {
     class ViewHolder(val binding: FavoriteCardLayoutBinding ) : RecyclerView.ViewHolder(binding.root){
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = FavoriteCardLayoutBinding.inflate(inflater,parent,false)
         return ViewHolder(binding)
     }
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    override fun onBindViewHolder(holder: FavoriteAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val binding = holder.binding
         val favoriteCoordinate  = getItem(position)
         val address = coordToString(favoriteCoordinate,binding)

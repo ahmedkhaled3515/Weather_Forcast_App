@@ -45,9 +45,11 @@ class AppRepository private constructor(val context: Context): IAppRepository {
     override suspend fun getAllForecastData(
         lat: Double,
         lon: Double,
-        apiKey: String
+        apiKey: String,
+        units:String,
+        lang:String
     ): Flow<WeatherResponse> {
-        return remoteDataSource.getAllForecastData(lat, lon, apiKey)
+        return remoteDataSource.getAllForecastData(lat, lon, apiKey,units,lang)
     }
 
     override suspend fun getAllFavorites(): Flow<List<FavoriteCoordinate>> {

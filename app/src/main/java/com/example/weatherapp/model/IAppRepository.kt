@@ -8,7 +8,7 @@ interface IAppRepository {
     suspend fun getFiveDayForecast(lat:Double,lon:Double,apiKey:String): Flow<WeatherResponse>
 
     suspend fun getDailyForecast(lat: Double,lon: Double,apiKey: String) : WeatherResponse
-    suspend fun getAllForecastData(lat: Double,lon: Double,apiKey: String) : Flow<WeatherResponse>
+    suspend fun getAllForecastData(lat: Double,lon: Double,apiKey: String,units: String = "metric",lang : String = "en") : Flow<WeatherResponse>
     suspend fun getAllFavorites() : Flow<List<FavoriteCoordinate>>
     suspend fun addFavorite(coordinate: FavoriteCoordinate)
     suspend fun deleteFavorite(coordinate: FavoriteCoordinate)

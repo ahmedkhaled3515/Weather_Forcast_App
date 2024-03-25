@@ -6,7 +6,6 @@
         android:title="@string/home_text"
         android:id="@+id/homeFragment"
         android:icon="@drawable/home_icon"
-        android:iconTint="@color/black"
         />
     <item
         android:id="@+id/favoriteFragment"
@@ -20,7 +19,7 @@
         />
     <item
         android:title="@string/settings_text"
-        android:id="@+id/settings"
+        android:id="@+id/settingsFragment"
         android:icon="@drawable/settings_icon"
         />
 

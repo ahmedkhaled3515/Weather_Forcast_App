@@ -1,23 +1,19 @@
-package com.example.weatherapp.views
+package com.example.weatherapp.views.alert
 
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherapp.database.AlertDao
 import com.example.weatherapp.databinding.AlertCardLayoutBinding
-import com.example.weatherapp.databinding.FavoriteCardLayoutBinding
-import com.example.weatherapp.databinding.FragmentAlertBinding
-import com.example.weatherapp.model.FavoriteCoordinate
 import com.example.weatherapp.model.LocationAlert
-import java.util.Calendar
 
-class AlertAdapter(val context: Context , val remove : (location: LocationAlert) -> Unit) : ListAdapter<LocationAlert,AlertAdapter.ViewHolder>(LocationAlertDiffUtil()) {
+class AlertAdapter(val context: Context , val remove : (location: LocationAlert) -> Unit) : ListAdapter<LocationAlert, AlertAdapter.ViewHolder>(
+    LocationAlertDiffUtil()
+) {
     class ViewHolder(val binding: AlertCardLayoutBinding) : RecyclerView.ViewHolder(binding.root) {
 
     }

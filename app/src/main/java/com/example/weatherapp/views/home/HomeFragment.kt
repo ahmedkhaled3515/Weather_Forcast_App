@@ -1,10 +1,11 @@
-package com.example.weatherapp.views
+package com.example.weatherapp.views.home
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
@@ -20,6 +21,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.recreate
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -30,6 +32,7 @@ import com.bumptech.glide.Glide
 import com.example.weatherapp.ApiState
 import com.example.weatherapp.R
 import com.example.weatherapp.ViewModel.CurrentForecastViewModel
+import com.example.weatherapp.ViewModel.SharedSettingsViewModel
 import com.example.weatherapp.database.LocalDataSource
 import com.example.weatherapp.model.WeatherResponse
 import com.google.android.gms.location.LocationCallback
@@ -40,25 +43,18 @@ import com.google.android.gms.location.Priority
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
+
 class HomeFragment : Fragment() {
     private lateinit var sharedPreferences: SharedPreferences
     companion object{
           const val API_KEY="172e0cbb3264b27530f5b6c425ffb29d"
     }
+    private var language = "en"
     private lateinit var layout: ConstraintLayout
 
     var currentLat:Double?=null
     var currentLon:Double?=null
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-//        getLocation()
-        getLocation()
-        sharedPreferences = requireActivity().getSharedPreferences("myShared",Context.MODE_PRIVATE)
-        return inflater.inflate(R.layout.fragment_home, container, false)
-    }
     private lateinit var weatherIcon:ImageView
     private lateinit var currentDegreeTV:TextView
     private lateinit var currentDescriptionTV:TextView
@@ -73,6 +69,18 @@ class HomeFragment : Fragment() {
     private var currentSuccess:Boolean?=false
     private var fiveSuccess:Boolean?=false
     private lateinit var progress:ProgressBar
+    private val sharedSettingsViewModel : SharedSettingsViewModel by activityViewModels()
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+//        getLocation()
+        getLocation()
+        sharedPreferences = requireActivity().getSharedPreferences("myShared",Context.MODE_PRIVATE)
+        return inflater.inflate(R.layout.fragment_home, container, false)
+    }
+
 
     private fun initializeComponents(view: View)
     {
@@ -118,95 +126,9 @@ class HomeFragment : Fragment() {
             }
 
         }
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            repeatOnLifecycle(Lifecycle.State.STARTED)
-//            {
-//                viewModel.fiveForecast
-//                    .collect()
-//                    {
-//                        when(it){
-//                            is ApiState.Success -> {
-//                                val newList= it.data.list.take(8)
-//                                Log.i("TAG", "onViewCreated2:${it} ")
-//                                hourlyRV.apply {
-//                                    layoutManager=LinearLayoutManager(requireContext()).apply {
-//                                        orientation=LinearLayoutManager.HORIZONTAL
-//                                    }
-//                                    adapter = HourlyForecastListAdapter(requireContext()).apply {
-//                                        submitList(newList)
-//                                    }
-//                                    fiveSuccess=true
-//                                    if(currentSuccess == true)
-//                                    {
-//                                        layout.visibility=View.VISIBLE
-//                                        progress.visibility=View.GONE
-//
-//                                    }
-//                                }
-//                            }
-//                            is ApiState.Failure ->{
-//                                Toast.makeText(requireActivity(),"Failed",Toast.LENGTH_SHORT).show()
-//                                it.msg.printStackTrace()
-//                            }
-//                            else -> {
-//                                Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
-//                                layout.visibility= View.GONE
-//                                progress.visibility=View.VISIBLE
-//
-//                            }
-//                        }
-//                    }
-//            }
-//
-//        }
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            repeatOnLifecycle(Lifecycle.State.STARTED){
-//                viewModel.fiveForecast
-//                    .collect()
-//                    {
-//                        when(it){
-//                            is ApiState.Success -> {
-//                                val newList= it.data.list.distinctBy {
-//                                        forecast ->
-//                                    val calendar=Calendar.getInstance()
-//                                    calendar.timeInMillis= forecast.dt*1000
-//                                    calendar.get(Calendar.DATE)
-//                                }
-//                                dailyRV.apply {
-//                                    layoutManager=LinearLayoutManager(this.context).apply {
-//                                        orientation=LinearLayoutManager.VERTICAL
-//                                    }
-//                                    adapter=FiveDaysForecastAdapter(this.context).apply {
-//                                        submitList(newList)
-//                                    }
-//                                }
-//                                fiveSuccess=true
-//                                if(currentSuccess == true)
-//                                {
-//                                    layout.visibility=View.VISIBLE
-//                                    progress.visibility=View.GONE
-//
-//                                }
-//                                Log.i("TAG", "onViewCreated4:${newList} ")
-//
-//                            }
-//                            is ApiState.Failure ->{
-//                                Toast.makeText(requireActivity(),"Failed",Toast.LENGTH_SHORT).show()
-//                                it.msg.printStackTrace()
-//                            }
-//                            else -> {
-//                                Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
-//                                layout.visibility=View.GONE
-//                                progress.visibility=View.VISIBLE
-//                            }
-//                        }
-//                    }
-//            }
-//
-//        }
-
 
     }
+
     private fun isSameDay(timestamp: Long) : Boolean{
         val calendar=Calendar.getInstance()
         calendar.timeInMillis=timestamp*1000
@@ -218,7 +140,17 @@ class HomeFragment : Fragment() {
     private fun setUiComponents(weatherResponse: WeatherResponse)
     {
         val forecast = weatherResponse.current
-        Log.i("TAG", "setUiComponents: $forecast")
+        Log.i("TAG", "setUiComponents: ${sharedSettingsViewModel.language}")
+        viewLifecycleOwner.lifecycleScope.launch {
+            sharedSettingsViewModel.language.collect(){
+                repeatOnLifecycle(Lifecycle.State.STARTED)
+                {
+                    language = it
+//                    changeLanguage(it)
+                }
+            }
+        }
+
         currentDegreeTV.text="${forecast.temp}°c"
         currentDescriptionTV.text=forecast.weather[0].description
         windSpeedTV.text=forecast.windSpeed.toString()
@@ -248,15 +180,18 @@ class HomeFragment : Fragment() {
         }
 
     }
-    private fun hideUi()
-    {
-
-    }
-    fun timestampToDate(timestamp: Long): Date {
-        // Convert seconds to milliseconds
-        val milliseconds = timestamp * 1000
-        return Date(milliseconds)
-    }
+//    private fun changeLanguage(languageCode: String) {
+//        val locale = Locale(languageCode)
+//        Locale.setDefault(locale)
+//
+//        val config = Configuration(resources.configuration)
+//        config.setLocale(locale)
+//
+//        requireContext().resources.updateConfiguration(config, resources.displayMetrics)
+//
+//        // Recreate the activity to apply the language change
+////        requireActivity().recreate()
+//    }
     private fun getLocation()
     {
         val fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity())
@@ -269,7 +204,7 @@ class HomeFragment : Fragment() {
                 Log.i("TAG", "onLocationResult: ${location} ")
                 currentLon=location.lastLocation?.longitude
                 currentLat=location.lastLocation?.latitude
-                viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY)
+                viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY,"metric",language)
                 val editor = sharedPreferences.edit()
                 editor.putFloat("currentLon",currentLon!!.toFloat())
                 editor.putFloat("currentLat",currentLat!!.toFloat())

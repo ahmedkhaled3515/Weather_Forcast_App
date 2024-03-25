@@ -1,4 +1,4 @@
-package com.example.weatherapp.views
+package com.example.weatherapp.views.alert
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -14,14 +14,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.R
 import com.example.weatherapp.ViewModel.AlertViewModel
 import com.example.weatherapp.databinding.FragmentAlertBinding
 import com.example.weatherapp.model.LocationAlert
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
@@ -100,7 +98,7 @@ class AlertFragment : Fragment() {
             {
                 alertViewModel.alertFlow.collect(){
                     binding.alertRV.apply {
-                        adapter=AlertAdapter(context, ::remove).apply {
+                        adapter= AlertAdapter(context, ::remove).apply {
                             submitList(it)
                         }
                     }

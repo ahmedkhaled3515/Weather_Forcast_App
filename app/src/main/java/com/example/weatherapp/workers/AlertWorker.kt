@@ -1,6 +1,5 @@
 package com.example.weatherapp.workers
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -8,26 +7,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.work.CoroutineWorker
 import androidx.work.Data
-import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.weatherapp.MainActivity
 import com.example.weatherapp.R
-import com.example.weatherapp.ViewModel.CurrentForecastViewModel
 import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.WeatherResponse
-import com.example.weatherapp.views.HomeFragment.Companion.API_KEY
-import com.example.weatherapp.views.MapsFragment
+import com.example.weatherapp.views.home.HomeFragment.Companion.API_KEY
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
@@ -71,11 +60,6 @@ class AlertWorker(val context: Context, val workerParameters: WorkerParameters) 
             Result.failure()
         }
     }
-
-    fun removeChar(input: String?, charToRemove: Char): String? {
-        return input?.replace(charToRemove.toString(), "")
-    }
-
     private fun showNotification(context: Context, title: String, content: String) {
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

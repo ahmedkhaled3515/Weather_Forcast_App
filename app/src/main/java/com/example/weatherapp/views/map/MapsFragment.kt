@@ -1,13 +1,8 @@
-package com.example.weatherapp.views
+package com.example.weatherapp.views.map
 
 import android.app.DatePickerDialog
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.fragment.app.Fragment
@@ -17,10 +12,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.DatePicker
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
@@ -29,9 +22,7 @@ import androidx.navigation.Navigation
 import androidx.work.Constraints
 import androidx.work.Data
 import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
@@ -44,10 +35,7 @@ import com.example.weatherapp.databinding.FragmentMapsBinding
 import com.example.weatherapp.model.FavoriteCoordinate
 import com.example.weatherapp.model.LocationAlert
 import com.example.weatherapp.model.WeatherResponse
-import com.example.weatherapp.views.HomeFragment.Companion.API_KEY
 import com.example.weatherapp.workers.AlertWorker
-import com.example.weatherapp.workers.AlertWorker.Companion.CHANNEL_ID
-import com.example.weatherapp.workers.AlertWorker.Companion.NOTIFICATION_ID
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -55,12 +43,9 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
-import kotlin.math.log
-import kotlin.time.Duration.Companion.minutes
 
 class MapsFragment : Fragment(),OnMapReadyCallback{
 
@@ -220,7 +205,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
                     WorkInfo.State.SUCCEEDED -> {
                         Log.i("TAG", "Work succeeded")
                         Log.i("TAG", "makeWorkRequest: $locationAlert")
-                        alertViewModel.deleteAlertById(2)
+                        alertViewModel.deleteAlert(locationAlert)
                     }
                     WorkInfo.State.FAILED -> {
                         Log.i("TAG", "Work failed")

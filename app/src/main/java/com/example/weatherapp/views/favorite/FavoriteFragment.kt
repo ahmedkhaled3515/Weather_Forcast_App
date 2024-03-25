@@ -1,13 +1,11 @@
-package com.example.weatherapp.views
+package com.example.weatherapp.views.favorite
 
-import android.os.Binder
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -19,13 +17,7 @@ import com.example.weatherapp.R
 import com.example.weatherapp.ViewModel.FavoriteViewModel
 import com.example.weatherapp.databinding.FragmentFavoriteBinding
 import com.example.weatherapp.model.FavoriteCoordinate
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -45,7 +37,7 @@ class FavoriteFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFavoriteBinding.inflate(inflater,container,false)
+        binding = FragmentFavoriteBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
         val bundle = arguments
         if(bundle != null)
@@ -69,8 +61,8 @@ class FavoriteFragment : Fragment() {
     private fun setRecyclerView()
     {
         binding.favoriteRV.apply {
-            layoutManager=LinearLayoutManager(this.context).apply {
-                orientation=LinearLayoutManager.VERTICAL
+            layoutManager= LinearLayoutManager(this.context).apply {
+                orientation= LinearLayoutManager.VERTICAL
             }
         }
         viewLifecycleOwner.lifecycleScope.launch {
@@ -78,7 +70,7 @@ class FavoriteFragment : Fragment() {
             {
                 favoriteViewModel.favoriteFlow.collect(){
                     binding.favoriteRV.apply {
-                        adapter=FavoriteAdapter(requireContext(), ::removeLocation).apply {
+                        adapter= FavoriteAdapter(requireContext(), ::removeLocation).apply {
                             submitList(it)
                         }
                     }
