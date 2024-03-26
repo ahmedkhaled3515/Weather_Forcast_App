@@ -1,8 +1,12 @@
 package com.example.weatherapp.views.map
 
+import android.annotation.SuppressLint
+import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.fragment.app.Fragment
@@ -36,6 +40,8 @@ import com.example.weatherapp.databinding.FragmentMapsBinding
 import com.example.weatherapp.model.FavoriteCoordinate
 import com.example.weatherapp.model.LocationAlert
 import com.example.weatherapp.model.WeatherResponse
+import com.example.weatherapp.sevices.DismissNotificationReceiver
+import com.example.weatherapp.sevices.MyAlarmService
 import com.example.weatherapp.workers.AlertWorker
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -47,6 +53,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
+import kotlin.math.log
 
 class MapsFragment : Fragment(),OnMapReadyCallback{
 
@@ -163,7 +170,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
                     )
                     Log.i("TAG", "openTimeDialog: $locationAlert")
                     alertViewModel.addAlert(locationAlert)
-                    makeWorkRequest(currentLongitude!!, currentLatitude!!, calendar.timeInMillis,locationAlert)
+                    setAlarm(currentLongitude!!, currentLatitude!!, calendar.timeInMillis,locationAlert)
                     navController.navigate(R.id.action_mapsFragment_to_alertFragment)
                 } else {
                     Toast.makeText(requireContext(), "Can't pick passed time", Toast.LENGTH_SHORT).show()
@@ -174,6 +181,21 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
             false
         )
         timePickerDialog.show()
+    }
+    @SuppressLint("ScheduleExactAlarm")
+    fun setAlarm(long:Double, lat:Double, alertTime: Long, locationAlert: LocationAlert)
+    {
+        Log.i("TAG", "setAlarm: $locationAlert")
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as? AlarmManager
+        val alarmIntent = Intent(context,DismissNotificationReceiver::class.java)
+        alarmIntent.apply {
+            putExtra("id",locationAlert.id)
+            putExtra("lat",lat)
+            putExtra("long",long)
+        }
+        val pendingIntent = PendingIntent.getBroadcast(context,7,alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        alarmManager?.setExact(AlarmManager.RTC_WAKEUP,alertTime,pendingIntent)
+        Log.i("TAG", "setAlarm: helloo")
     }
     private fun makeWorkRequest(long:Double,lat:Double,alertTime: Long,locationAlert: LocationAlert)
     {
