@@ -34,4 +34,8 @@ class LocalDataSource(context: Context) : ILocalDataSource {
     override suspend fun deleteAlertById(id: Int) {
         alertDao.deleteAlertById(id)
     }
+
+    override suspend fun getLastInsertedAlert() : Flow<LocationAlert> {
+       return alertDao.getLastInsertedRow()
+    }
 }

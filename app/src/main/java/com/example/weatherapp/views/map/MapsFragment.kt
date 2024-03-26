@@ -23,6 +23,7 @@ import androidx.work.Constraints
 import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
@@ -150,6 +151,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
                             if(it.isNotEmpty())
                             {
                                 count = it.last().id
+                                Log.i("TAG", "openTimeDialog: $it")
                             }
                         }
                     }
@@ -175,20 +177,18 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
     }
     private fun makeWorkRequest(long:Double,lat:Double,alertTime: Long,locationAlert: LocationAlert)
     {
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.CONNECTED)
-            .build()
+        Log.i("TAG", "makeWorkRequest: $locationAlert")
         val currentTime = Calendar.getInstance().timeInMillis
-        val timeDiff = alertTime - currentTime
+        val timeDiff = alertTime/1000 - currentTime/1000
         val inputData = Data.Builder()
             .putDouble("long",currentLongitude!!)
             .putDouble("lat",currentLatitude!!)
+            .putInt("id",locationAlert.id)
             .build()
 //        val alertWorkRequest : WorkRequest = OneTimeWorkRequest.from(AlertWorker::class.java)
         val alertWorkRequest : WorkRequest = OneTimeWorkRequestBuilder<AlertWorker>()
-            .setInitialDelay(timeDiff,TimeUnit.MILLISECONDS)
+            .setInitialDelay(timeDiff,TimeUnit.SECONDS)
             .setInputData(inputData)
-            .setConstraints(constraints)
             .build()
         val workManger : WorkManager = WorkManager.getInstance(requireContext())
         workManger.enqueue(alertWorkRequest)
@@ -205,7 +205,6 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
                     WorkInfo.State.SUCCEEDED -> {
                         Log.i("TAG", "Work succeeded")
                         Log.i("TAG", "makeWorkRequest: $locationAlert")
-                        alertViewModel.deleteAlert(locationAlert)
                     }
                     WorkInfo.State.FAILED -> {
                         Log.i("TAG", "Work failed")
@@ -222,24 +221,4 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
             }
         })
     }
-    private fun callViewModel()
-    {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.forecast.collect(){
-                when(it)
-                {
-                    is ApiState.Success -> {
-                        notificationWeather = it.data
-                    }
-                    is ApiState.Failure -> {
-                        Log.i("TAG", "callViewModel: Notification failed")
-                    }
-                    else -> {
-
-                    }
-                }
-            }
-        }
-    }
-
 }

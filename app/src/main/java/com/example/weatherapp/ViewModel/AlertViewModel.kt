@@ -7,15 +7,22 @@ import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.LocationAlert
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class AlertViewModel(application: Application) : AndroidViewModel(application) {
     val appRepo = AppRepository.getInstance(application.applicationContext)
     private val _alertFlow = MutableStateFlow<List<LocationAlert>>(emptyList())
     val alertFlow = _alertFlow.asStateFlow()
+    private val _lastAlertInserted:MutableStateFlow<LocationAlert> = MutableStateFlow(
+        LocationAlert(0,0.0,0.0,
+            Calendar.getInstance())
+    )
+    val lastAlertInserted: StateFlow<LocationAlert> get() = _lastAlertInserted
     init {
         getAllAlerts()
     }
@@ -46,5 +53,13 @@ class AlertViewModel(application: Application) : AndroidViewModel(application) {
             appRepo.deleteAlertById(id)
         }
         getAllAlerts()
+    }
+    fun getLastInsertedAlert()
+    {
+        viewModelScope.launch (Dispatchers.IO){
+            appRepo.getLastInsertedAlert().collect(){
+                _lastAlertInserted.value=it
+            }
+        }
     }
 }

@@ -12,4 +12,5 @@ interface ILocalDataSource {
     suspend fun  addAlert(locationAlert: LocationAlert)
     suspend fun deleteAlert(locationAlert: LocationAlert)
     suspend fun deleteAlertById(id: Int)
+    suspend fun getLastInsertedAlert() : Flow<LocationAlert>
 }

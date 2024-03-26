@@ -80,4 +80,8 @@ class AppRepository private constructor(val context: Context): IAppRepository {
         localDataSource.deleteAlertById(id)
     }
 
+    override suspend fun getLastInsertedAlert() : Flow<LocationAlert> {
+        return localDataSource.getLastInsertedAlert()
+    }
+
 }
