@@ -1,6 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    kotlin("kapt")
 }
 
 android {
@@ -18,6 +20,7 @@ android {
     }
 
     buildTypes {
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -33,11 +36,34 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures{
+        viewBinding=true
+    }
+
 }
 
+
 dependencies {
+    //AndroidX
+//    implementation("androidx.core:core-ktx:2.2.0")
+    //WorkManager
+    implementation ("androidx.work:work-runtime:2.9.0")
+    //Room DataBase
+    implementation ("androidx.room:room-runtime:2.6.1")
+    kapt ("androidx.room:room-compiler:2.6.1")
+    implementation ("androidx.room:room-runtime:2.6.1")
+    annotationProcessor ("androidx.room:room-compiler:2.6.1")
+    implementation ("androidx.room:room-ktx:2.6.1")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    //Navigation component
+    implementation ("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation ("androidx.navigation:navigation-ui-ktx:2.7.7")
+    //LocationServices
+    implementation ("com.google.android.gms:play-services-location:21.2.0")
     //glide
     implementation ("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.13.0")
     //coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1")

@@ -3,4 +3,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="cards_pink">#D0BCFF</color>
+    <color name="customDialogBackground">#FFFFFF</color>
+    <color name="customDialogTitle">#FF5722</color>
+    <color name="customDialogText">#000000</color>
+    <color name="customDialogButtonPositive">#FF5722</color>
+    <color name="customDialogButtonNegative">#616161</color>
 </resources>

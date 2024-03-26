@@ -2,4 +2,16 @@
     <string name="app_name">WeatherApp</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="remove_button_text">Remove</string>
+    <string name="settings_text">settings</string>
+    <string name="favorite_text">favorite</string>
+    <string name="home_text">Home</string>
+    <string name="alerts">alerts</string>
+    <string name="language_text">Language</string>
+    <string name="english_language_text">English</string>
+    <string name="arabic_language_text">Arabic</string>
+    <string name="temperature_text">Temperature</string>
+    <string name="celsius_text">Celsius</string>
+    <string name="kelvin_text">Kelvin</string>
+    <string name="fahrenheit_text">Fahrenheit</string>
 </resources>
