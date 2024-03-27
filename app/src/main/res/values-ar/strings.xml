@@ -14,4 +14,13 @@
     <string name="celsius_text">مئوية</string>
     <string name="kelvin_text">كلفن</string>
     <string name="fahrenheit_text">فهرنهايت</string>
+    <string name="save_text">حفظ</string>
+    <string name="wind_speed_text2">سرعة الرياح</string>
+    <string name="humidity_text">الرطوبة</string>
+    <string name="pressure_text">الضغط</string>
+    <string name="rain_chance">الامطار</string>
+    <string name="Alert_Title">تأكيد المسح</string>
+    <string name="alert_description">هل انت متأكد من مسح هذا الموقع</string>
+    <string name="ok_text">حسنا</string>
+    <string name="cancel_text">الغاء</string>
 </resources>

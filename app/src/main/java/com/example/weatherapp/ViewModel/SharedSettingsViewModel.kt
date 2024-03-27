@@ -13,12 +13,20 @@ import kotlin.math.log
 class SharedSettingsViewModel : ViewModel() {
     private val _language = MutableSharedFlow<String>(replay = 1)
     val language : SharedFlow<String> = _language.asSharedFlow()
-
+    private val _unitsFlow = MutableSharedFlow<String>(replay = 1)
+    val unitsFlow : SharedFlow<String> = _unitsFlow.asSharedFlow()
     fun changeLanguage(lang : String)
     {
         viewModelScope.launch {
             Log.i("TAG", "changeLanguage: $lang ")
             _language.emit(lang)
+        }
+    }
+fun changeUnit(units : String)
+    {
+        viewModelScope.launch {
+            Log.i("TAG", "changeUnit: $units ")
+            _unitsFlow.emit(units)
         }
     }
 

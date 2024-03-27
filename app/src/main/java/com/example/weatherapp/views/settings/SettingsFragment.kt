@@ -15,7 +15,8 @@ import com.example.weatherapp.databinding.FragmentSettingsBinding
 import java.util.Locale
 
 class SettingsFragment : Fragment() {
-
+    var lang= "en"
+    var unit = "metric"
     private val sharedSettingsViewModel : SharedSettingsViewModel by activityViewModels()
     private lateinit var binding: FragmentSettingsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,39 +38,45 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         languageSwitch()
         temperatureSwitch()
+        binding.recreateButton.setOnClickListener {
+            Log.i("TAG", "onViewCreated: $lang")
+            sharedSettingsViewModel.changeLanguage(lang)
+            sharedSettingsViewModel.changeUnit(unit)
+            changeLanguage(lang)
+            activity?.recreate()
+        }
     }
     private fun languageSwitch()
     {
+
         binding.languageRadioGroup.setOnCheckedChangeListener(){ radioGroup: RadioGroup, id: Int ->
             when (id) {
                 binding.arabicRadioButton.id -> {
                     Toast.makeText(requireContext(), "Arabic", Toast.LENGTH_SHORT).show()
-                    // Assuming sharedSettingsViewModel is initialized and changeLanguage function exists
-                    sharedSettingsViewModel.changeLanguage("ar")
-                    changeLanguage("ar")
-                    // Recreate the activity to apply language changes
-//                    requireActivity().recreate()
+                    lang = "ar"
                 }
                 binding.englishRadioButton.id -> {
                     Toast.makeText(requireContext(), "English", Toast.LENGTH_SHORT).show()
-                    sharedSettingsViewModel.changeLanguage("en")
-                    // Handle switching to English language if needed
-                    // Optionally, you can call sharedSettingsViewModel.changeLanguage("en")
+                    lang ="en"
                 }
             }
         }
+        Log.i("TAG", "languageSwitch: $lang")
     }
     private fun temperatureSwitch(){
         binding.temperatureRadioGroup.setOnCheckedChangeListener(){ radioGroup: RadioGroup, id: Int ->
             when(id){
                 binding.celsiusRadioButton.id -> {
                     Toast.makeText(requireContext(), "Celsius", Toast.LENGTH_SHORT).show()
+                    unit = "metric"
                 }
                 binding.kelvinRadioButton.id->{
                     Toast.makeText(requireContext(), "Kelvin", Toast.LENGTH_SHORT).show()
+                    unit = "standard"
                 }
                 binding.fahrenhietRadioButton.id->{
                     Toast.makeText(requireContext(), "Fahrenheit", Toast.LENGTH_SHORT).show()
+                    unit = "imperial"
                 }
             }
         }

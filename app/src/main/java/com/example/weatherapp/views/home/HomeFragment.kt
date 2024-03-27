@@ -34,7 +34,9 @@ import com.example.weatherapp.R
 import com.example.weatherapp.ViewModel.CurrentForecastViewModel
 import com.example.weatherapp.ViewModel.SharedSettingsViewModel
 import com.example.weatherapp.database.LocalDataSource
+import com.example.weatherapp.language
 import com.example.weatherapp.model.WeatherResponse
+import com.example.weatherapp.units
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -50,7 +52,7 @@ class HomeFragment : Fragment() {
     companion object{
           const val API_KEY="172e0cbb3264b27530f5b6c425ffb29d"
     }
-    private var language = "en"
+//    private var language = "en"
     private lateinit var layout: ConstraintLayout
 
     var currentLat:Double?=null
@@ -108,7 +110,6 @@ class HomeFragment : Fragment() {
                     when(it)
                     {
                         is ApiState.Success ->{
-//                            isSameDay(it.data)
                             setUiComponents(it.data)
                             currentSuccess=true
                             progress.visibility=View.GONE
@@ -126,6 +127,24 @@ class HomeFragment : Fragment() {
             }
 
         }
+        viewLifecycleOwner.lifecycleScope.launch {
+            sharedSettingsViewModel.language.collect(){
+                repeatOnLifecycle(Lifecycle.State.STARTED)
+                {
+                    language = it
+//                    changeLanguage(it)
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            sharedSettingsViewModel.unitsFlow.collect(){
+                repeatOnLifecycle(Lifecycle.State.STARTED)
+                {
+                    units = it
+//                    changeLanguage(it)
+                }
+            }
+        }
 
     }
 
@@ -141,15 +160,7 @@ class HomeFragment : Fragment() {
     {
         val forecast = weatherResponse.current
         Log.i("TAG", "setUiComponents: ${sharedSettingsViewModel.language}")
-        viewLifecycleOwner.lifecycleScope.launch {
-            sharedSettingsViewModel.language.collect(){
-                repeatOnLifecycle(Lifecycle.State.STARTED)
-                {
-                    language = it
-//                    changeLanguage(it)
-                }
-            }
-        }
+
 
         currentDegreeTV.text="${forecast.temp}°c"
         currentDescriptionTV.text=forecast.weather[0].description
@@ -204,7 +215,7 @@ class HomeFragment : Fragment() {
                 Log.i("TAG", "onLocationResult: ${location} ")
                 currentLon=location.lastLocation?.longitude
                 currentLat=location.lastLocation?.latitude
-                viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY,"metric",language)
+                viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY, units = units,language)
                 val editor = sharedPreferences.edit()
                 editor.putFloat("currentLon",currentLon!!.toFloat())
                 editor.putFloat("currentLat",currentLat!!.toFloat())

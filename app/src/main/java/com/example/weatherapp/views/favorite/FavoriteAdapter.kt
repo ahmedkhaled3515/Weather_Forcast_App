@@ -10,6 +10,7 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FavoriteCardLayoutBinding
 import com.example.weatherapp.model.FavoriteCoordinate
 class FavoriteAdapter(val context: Context , val removeLocation: (coord:FavoriteCoordinate)-> Unit) : ListAdapter<FavoriteCoordinate, FavoriteAdapter.ViewHolder>(
@@ -68,15 +69,15 @@ class FavoriteCoordinateDiffUtil : DiffUtil.ItemCallback<FavoriteCoordinate>() {
 }
     private fun showAlertDialog(favoriteCoordinate: FavoriteCoordinate) {
         AlertDialog.Builder(context)
-            .setTitle("Alert Title")
-            .setMessage("Are you sure you want to remove this location")
-            .setPositiveButton("OK") { dialog, which ->
+            .setTitle(R.string.Alert_Title)
+            .setMessage(R.string.alert_description)
+            .setPositiveButton(R.string.ok_text) { dialog, which ->
                 removeLocation(favoriteCoordinate)
                 // Handle positive button click
                 // For example, perform some action on the clicked item
                 // You can access your data using the position parameter
             }
-            .setNegativeButton("Cancel", null) // You can handle cancel action if needed
+            .setNegativeButton(R.string.cancel_text, null) // You can handle cancel action if needed
             .show()
     }
 }

@@ -14,4 +14,13 @@
     <string name="celsius_text">Celsius</string>
     <string name="kelvin_text">Kelvin</string>
     <string name="fahrenheit_text">Fahrenheit</string>
+    <string name="save_text">Save</string>
+    <string name="wind_speed_text2">Wind speed</string>
+    <string name="humidity_text">Humidity</string>
+    <string name="pressure_text">Pressure</string>
+    <string name="rain_chance">Rain chance</string>
+    <string name="Alert_Title">Confirmation</string>
+    <string name="alert_description">Are you sure you want to remove this location</string>
+    <string name="ok_text">OK</string>
+    <string name="cancel_text">Cancel</string>
 </resources>

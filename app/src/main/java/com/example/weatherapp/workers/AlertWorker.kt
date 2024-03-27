@@ -99,7 +99,6 @@ class AlertWorker(val context: Context, val workerParameters: WorkerParameters) 
             .setSmallIcon(R.drawable.cloud_2489384)
             .setCustomContentView(notificationLayout)
             .build()
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Alerts"
             val descriptionText = "Allows the application to send you alert notification"
@@ -120,5 +119,4 @@ class AlertWorker(val context: Context, val workerParameters: WorkerParameters) 
         val ringtoneIntent = Intent(context, MyAlarmService::class.java)
         ContextCompat.startForegroundService(context, ringtoneIntent)
     }
-
 }

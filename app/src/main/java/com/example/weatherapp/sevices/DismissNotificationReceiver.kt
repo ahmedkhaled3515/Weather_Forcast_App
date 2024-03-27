@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.example.weatherapp.MainActivity
 import com.example.weatherapp.R
+import com.example.weatherapp.language
 import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.WeatherResponse
 import com.example.weatherapp.views.home.HomeFragment
@@ -70,7 +71,8 @@ class DismissNotificationReceiver  : BroadcastReceiver(){
     }
     private suspend fun getCurrentWeather(lat:Double, long:Double)
     {
-        appRepo.getAllForecastData(lat,long, HomeFragment.API_KEY).collect(){
+        Log.i("TAG", "getCurrentWeather: $language")
+        appRepo.getAllForecastData(lat,long, HomeFragment.API_KEY, lang = language ).collect(){
             weatherData=it
         }
     }
