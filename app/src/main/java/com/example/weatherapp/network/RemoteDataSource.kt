@@ -3,7 +3,6 @@ package com.example.weatherapp.network
 import com.example.weatherapp.model.WeatherResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import okhttp3.ResponseBody
 
 class RemoteDataSource : IRemoteDataSource {
     private val apiServices=Api.apiServices
@@ -30,11 +29,11 @@ class RemoteDataSource : IRemoteDataSource {
         lat: Double,
         lon: Double,
         apiKey: String,
-        metric : String,
+        units : String,
         lang : String
     ): Flow<WeatherResponse> {
         return flow {
-            val forecastResponse = apiServices.getOneApi(lat, lon, apiKey,metric,lang)
+            val forecastResponse = apiServices.getOneApi(lat, lon, apiKey,units,lang)
             emit(forecastResponse)
         }
     }
