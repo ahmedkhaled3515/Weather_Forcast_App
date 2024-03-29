@@ -32,7 +32,8 @@ class DismissNotificationReceiver  : BroadcastReceiver(){
         val long = intent.getDoubleExtra("long",0.0)
         appRepo = AppRepository.getInstance(context!!)
         CoroutineScope(Dispatchers.IO).launch{
-            appRepo.deleteAlertById(id)
+            val reId= appRepo.deleteAlertById(id)
+            Log.i("TAG", "onReceive: $reId")
             getCurrentWeather(lat,long)
             val current = weatherData.current
             showNotification(context, "Weather alert", "The weather in ${weatherData.timezone} is ${current.weather[0].main}\ntemp is ${current.temp}°C")

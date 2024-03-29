@@ -22,7 +22,7 @@ class SharedSettingsViewModel : ViewModel() {
             _language.emit(lang)
         }
     }
-fun changeUnit(units : String)
+    fun changeUnit(units : String)
     {
         viewModelScope.launch {
             Log.i("TAG", "changeUnit: $units ")

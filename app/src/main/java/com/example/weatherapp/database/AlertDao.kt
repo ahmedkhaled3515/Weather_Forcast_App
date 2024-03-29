@@ -16,9 +16,9 @@ interface AlertDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun addAlert(locationAlert: LocationAlert)
     @Delete
-    fun deleteAlert(locationAlert: LocationAlert)
+    fun deleteAlert(locationAlert: LocationAlert) : Int
     @Query("DELETE FROM location_alert WHERE id = :alertId")
-    fun deleteAlertById(alertId: Int)
+    fun deleteAlertById(alertId: Int) : Int
     @Query("SELECT * FROM location_alert WHERE id = (SELECT MAX(id) FROM location_alert)")
     fun getLastInsertedRow(): Flow<LocationAlert>
 }

@@ -10,7 +10,7 @@ interface ILocalDataSource {
     suspend fun deleteFavorite(coordinate: FavoriteCoordinate)
     suspend fun  getAllAlerts() : Flow<List<LocationAlert>>
     suspend fun  addAlert(locationAlert: LocationAlert)
-    suspend fun deleteAlert(locationAlert: LocationAlert)
-    suspend fun deleteAlertById(id: Int)
+    suspend fun deleteAlert(locationAlert: LocationAlert) : Int
+    suspend fun deleteAlertById(id: Int) : Int
     suspend fun getLastInsertedAlert() : Flow<LocationAlert>
 }

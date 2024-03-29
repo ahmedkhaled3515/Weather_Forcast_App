@@ -30,7 +30,6 @@ class SettingsFragment : Fragment() {
     ): View {
         binding = FragmentSettingsBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
-
         return binding.root
     }
 

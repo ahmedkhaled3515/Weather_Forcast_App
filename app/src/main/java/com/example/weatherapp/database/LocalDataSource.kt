@@ -23,16 +23,16 @@ class LocalDataSource(context: Context) : ILocalDataSource {
         return alertDao.getAllAlerts()
     }
 
-    override suspend fun addAlert(locationAlert: LocationAlert) {
+    override suspend fun addAlert(locationAlert: LocationAlert){
         alertDao.addAlert(locationAlert)
     }
 
-    override suspend fun deleteAlert(locationAlert: LocationAlert) {
-        alertDao.deleteAlert(locationAlert)
+    override suspend fun deleteAlert(locationAlert: LocationAlert): Int {
+        return alertDao.deleteAlert(locationAlert)
     }
 
-    override suspend fun deleteAlertById(id: Int) {
-        alertDao.deleteAlertById(id)
+    override suspend fun deleteAlertById(id: Int) : Int{
+        return alertDao.deleteAlertById(id)
     }
 
     override suspend fun getLastInsertedAlert() : Flow<LocationAlert> {
