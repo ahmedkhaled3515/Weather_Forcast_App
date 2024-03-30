@@ -44,7 +44,6 @@ import com.example.weatherapp.model.WeatherResponse
 import com.example.weatherapp.network.RemoteDataSource
 import com.example.weatherapp.sevices.DismissNotificationReceiver
 import com.example.weatherapp.workers.AlertWorker
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
