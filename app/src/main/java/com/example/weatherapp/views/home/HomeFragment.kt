@@ -35,6 +35,7 @@ import com.example.weatherapp.R
 import com.example.weatherapp.ViewModel.CurrentForecastViewModel
 import com.example.weatherapp.ViewModel.CurrentForecastViewModelFactory
 import com.example.weatherapp.ViewModel.SharedSettingsViewModel
+import com.example.weatherapp.WeatherSharedPreferences
 import com.example.weatherapp.database.AppDatabase
 import com.example.weatherapp.database.LocalDataSource
 import com.example.weatherapp.language
@@ -77,6 +78,7 @@ class HomeFragment : Fragment() {
     private var fiveSuccess:Boolean?=false
     private lateinit var progress:ProgressBar
     private val sharedSettingsViewModel : SharedSettingsViewModel by activityViewModels()
+    private lateinit var weatherSharedPreferences : WeatherSharedPreferences
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -84,6 +86,7 @@ class HomeFragment : Fragment() {
         // Inflate the layout for this fragment
 //        getLocation()
         getLocation()
+        weatherSharedPreferences = WeatherSharedPreferences
         sharedPreferences = requireActivity().getSharedPreferences("myShared",Context.MODE_PRIVATE)
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -117,14 +120,25 @@ class HomeFragment : Fragment() {
                     when(it)
                     {
                         is ApiState.Success ->{
+                            weatherSharedPreferences.saveWeatherResponse(requireContext(),it.data)
                             setUiComponents(it.data)
                             currentSuccess=true
                             progress.visibility=View.GONE
 
                         }
                         is ApiState.Failure ->{
-                            Toast.makeText(requireActivity(), "Failed", Toast.LENGTH_SHORT).show()
-                            it.msg.printStackTrace()
+                            if(weatherSharedPreferences.getWeatherResponse(requireContext()) != null)
+                            {
+                                weatherSharedPreferences.getWeatherResponse(requireContext())
+                                    ?.let { it1 -> setUiComponents(it1) }
+                                Toast.makeText(requireActivity(),"No Internet Offline Mode",Toast.LENGTH_SHORT).show()
+                                progress.visibility = View.GONE
+                            }
+                            else{
+                                Toast.makeText(requireActivity(), "Failed", Toast.LENGTH_SHORT).show()
+                                it.msg.printStackTrace()
+                            }
+
                         }
                         else -> {
                             Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
