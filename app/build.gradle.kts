@@ -95,8 +95,7 @@ dependencies {
     androidTestImplementation ("androidx.test:rules:1.5.0")
     androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.1")
 
-    //Timber
-    implementation ("com.jakewharton.timber:timber:5.0.1")
+
 
     // hamcrest
     testImplementation ("org.hamcrest:hamcrest:2.2")

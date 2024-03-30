@@ -10,7 +10,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.fragment.app.Fragment
-
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,21 +17,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.work.Constraints
 import androidx.work.Data
-import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
-import com.example.weatherapp.ApiState
 import com.example.weatherapp.R
 import com.example.weatherapp.ViewModel.AlertViewModel
 import com.example.weatherapp.ViewModel.AlertViewModelFactory
@@ -49,7 +43,6 @@ import com.example.weatherapp.model.LocationAlert
 import com.example.weatherapp.model.WeatherResponse
 import com.example.weatherapp.network.RemoteDataSource
 import com.example.weatherapp.sevices.DismissNotificationReceiver
-import com.example.weatherapp.sevices.MyAlarmService
 import com.example.weatherapp.workers.AlertWorker
 
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -61,7 +54,6 @@ import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
-import kotlin.math.log
 
 class MapsFragment : Fragment(),OnMapReadyCallback{
 
@@ -211,7 +203,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
             putExtra("lat",lat)
             putExtra("long",long)
         }
-        val pendingIntent = PendingIntent.getBroadcast(context,7,alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getBroadcast(context,locationAlert.id,alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         alarmManager?.setExact(AlarmManager.RTC_WAKEUP,alertTime,pendingIntent)
         Log.i("TAG", "setAlarm: helloo")
     }
