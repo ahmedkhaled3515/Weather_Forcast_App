@@ -21,9 +21,6 @@ class RemoteDataSource : IRemoteDataSource {
         }
     }
 
-    override suspend fun getDailyForecast(lat: Double, lon: Double, apiKey: String): WeatherResponse {
-        return apiServices.getDailyForecast(lat,lon,apiKey)
-    }
 
     override suspend fun getAllForecastData(
         lat: Double,

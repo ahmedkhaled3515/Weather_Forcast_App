@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -34,12 +35,19 @@ import androidx.work.WorkRequest
 import com.example.weatherapp.ApiState
 import com.example.weatherapp.R
 import com.example.weatherapp.ViewModel.AlertViewModel
+import com.example.weatherapp.ViewModel.AlertViewModelFactory
 import com.example.weatherapp.ViewModel.CurrentForecastViewModel
+import com.example.weatherapp.ViewModel.CurrentForecastViewModelFactory
 import com.example.weatherapp.ViewModel.FavoriteViewModel
+import com.example.weatherapp.ViewModel.FavouriteViewModelFactory
+import com.example.weatherapp.database.AppDatabase
+import com.example.weatherapp.database.LocalDataSource
 import com.example.weatherapp.databinding.FragmentMapsBinding
+import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.FavoriteCoordinate
 import com.example.weatherapp.model.LocationAlert
 import com.example.weatherapp.model.WeatherResponse
+import com.example.weatherapp.network.RemoteDataSource
 import com.example.weatherapp.sevices.DismissNotificationReceiver
 import com.example.weatherapp.sevices.MyAlarmService
 import com.example.weatherapp.workers.AlertWorker
@@ -62,13 +70,13 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
     private lateinit var coordinates : LatLng
     private lateinit var navController : NavController
     private lateinit var sharedPreferences: SharedPreferences
-    private val favoriteViewModel:FavoriteViewModel by activityViewModels()
+    private lateinit var favoriteViewModel:FavoriteViewModel
     private var incomingBundle: Bundle?=null
     private lateinit var calendar: Calendar
-    private val alertViewModel : AlertViewModel by activityViewModels()
+    private lateinit var alertViewModel : AlertViewModel
     private var currentLatitude : Double?=null
     private var currentLongitude: Double? =null
-    private val viewModel: CurrentForecastViewModel by activityViewModels()
+    private lateinit var viewModel: CurrentForecastViewModel
     private lateinit var notificationWeather : WeatherResponse
 
     override fun onCreateView(
@@ -86,6 +94,16 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this, CurrentForecastViewModelFactory(
+            AppRepository.getInstance(
+                RemoteDataSource(), LocalDataSource(
+            AppDatabase.getInstance(requireContext()))
+            ))
+        ).get(CurrentForecastViewModel::class.java)
+        favoriteViewModel = ViewModelProvider(this,FavouriteViewModelFactory(AppRepository.getInstance(RemoteDataSource(),LocalDataSource(
+            AppDatabase.getInstance(requireContext()))))).get(FavoriteViewModel::class.java)
+        alertViewModel = ViewModelProvider(this,AlertViewModelFactory(AppRepository.getInstance(RemoteDataSource(),LocalDataSource(
+            AppDatabase.getInstance(requireContext()))))).get(AlertViewModel::class.java)
         navController = Navigation.findNavController(view)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)

@@ -15,8 +15,11 @@ import androidx.work.Data
 import androidx.work.WorkerParameters
 import com.example.weatherapp.MainActivity
 import com.example.weatherapp.R
+import com.example.weatherapp.database.AppDatabase
+import com.example.weatherapp.database.LocalDataSource
 import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.WeatherResponse
+import com.example.weatherapp.network.RemoteDataSource
 import com.example.weatherapp.sevices.MyAlarmService
 import com.example.weatherapp.views.home.HomeFragment.Companion.API_KEY
 import kotlinx.coroutines.Dispatchers
@@ -25,7 +28,7 @@ import kotlinx.coroutines.withContext
 
 class AlertWorker(val context: Context, val workerParameters: WorkerParameters) : CoroutineWorker(context,workerParameters) {
     var count = 0
-    val appRepo = AppRepository.getInstance(context)
+    val appRepo = AppRepository.getInstance(RemoteDataSource(),LocalDataSource(AppDatabase.getInstance(context)))
     companion object{
         final const val CHANNEL_ID="1"
         final const val NOTIFICATION_ID =1

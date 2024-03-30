@@ -24,6 +24,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.recreate
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,10 +33,14 @@ import com.bumptech.glide.Glide
 import com.example.weatherapp.ApiState
 import com.example.weatherapp.R
 import com.example.weatherapp.ViewModel.CurrentForecastViewModel
+import com.example.weatherapp.ViewModel.CurrentForecastViewModelFactory
 import com.example.weatherapp.ViewModel.SharedSettingsViewModel
+import com.example.weatherapp.database.AppDatabase
 import com.example.weatherapp.database.LocalDataSource
 import com.example.weatherapp.language
+import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.WeatherResponse
+import com.example.weatherapp.network.RemoteDataSource
 import com.example.weatherapp.units
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -64,7 +69,7 @@ class HomeFragment : Fragment() {
     private lateinit var rainChanceTV:TextView
     private lateinit var pressureTV:TextView
     private lateinit var humidityTV:TextView
-    private val viewModel:CurrentForecastViewModel by activityViewModels()
+    private lateinit var viewModel:CurrentForecastViewModel
     private lateinit var hourlyRV:RecyclerView
     private lateinit var dailyRV:RecyclerView
     private lateinit var locationText:TextView
@@ -101,8 +106,10 @@ class HomeFragment : Fragment() {
     }
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel = ViewModelProvider(this,CurrentForecastViewModelFactory(AppRepository.getInstance(RemoteDataSource(),LocalDataSource(
+            AppDatabase.getInstance(requireContext()))))).get(CurrentForecastViewModel::class.java)
         initializeComponents(view)
-        val localDataSource = LocalDataSource(requireActivity())
+        val localDataSource = LocalDataSource(AppDatabase.getInstance(requireContext()))
 //        viewModel= ViewModelProvider(this)[CurrentForecastViewModel::class.java]
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){

@@ -12,20 +12,28 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.R
 import com.example.weatherapp.ViewModel.AlertViewModel
+import com.example.weatherapp.ViewModel.AlertViewModelFactory
+import com.example.weatherapp.ViewModel.CurrentForecastViewModel
+import com.example.weatherapp.ViewModel.CurrentForecastViewModelFactory
+import com.example.weatherapp.database.AppDatabase
+import com.example.weatherapp.database.LocalDataSource
 import com.example.weatherapp.databinding.FragmentAlertBinding
+import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.LocationAlert
+import com.example.weatherapp.network.RemoteDataSource
 import kotlinx.coroutines.launch
 
 
 class AlertFragment : Fragment() {
     private lateinit var binding: FragmentAlertBinding
-    private val alertViewModel : AlertViewModel by activityViewModels()
+    private lateinit var alertViewModel : AlertViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,6 +46,12 @@ class AlertFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        alertViewModel = ViewModelProvider(this, AlertViewModelFactory(
+            AppRepository.getInstance(
+                RemoteDataSource(), LocalDataSource(
+            AppDatabase.getInstance(requireContext()))
+            ))
+        ).get(AlertViewModel::class.java)
         addButtonAction()
         setRecyclerView()
     }

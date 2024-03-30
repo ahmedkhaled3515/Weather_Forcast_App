@@ -116,6 +116,10 @@ dependencies {
     //
     testImplementation ("org.robolectric:robolectric:4.8")
     androidTestImplementation ("androidx.test.ext:junit-ktx:1.1.5")
-
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    androidTestImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 
 }

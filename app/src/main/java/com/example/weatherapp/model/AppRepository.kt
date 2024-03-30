@@ -11,24 +11,25 @@ import com.example.weatherapp.network.RemoteDataSource
 import kotlinx.coroutines.flow.Flow
 import okhttp3.ResponseBody
 
-class AppRepository private constructor(val context: Context): IAppRepository {
+class AppRepository private constructor(
+    private var remoteDataSource: IRemoteDataSource,
+    private var localDataSource : ILocalDataSource
+    ): IAppRepository {
 
     companion object{
         @SuppressLint("StaticFieldLeak")
         private var INSTANCE: AppRepository? = null
 
-        fun getInstance(context: Context) : AppRepository {
+        fun getInstance(remoteDataSource: IRemoteDataSource,localDataSource: ILocalDataSource) : AppRepository {
             return INSTANCE ?: synchronized(this)
             {
-                val instance = AppRepository(context)
+                val instance = AppRepository(remoteDataSource,localDataSource)
                 INSTANCE =instance
                 instance
 
             }
         }
     }
-    private var remoteDataSource: IRemoteDataSource = RemoteDataSource()
-    private var localDataSource : ILocalDataSource = LocalDataSource(context)
 //    override suspend fun getCurrentForecast(lat:Double, lon:Double, apiKey:String): Flow<Forecast>
 //    {
 //        return remoteDataSource.getCurrentForecast(lat,lon,apiKey)
@@ -37,10 +38,7 @@ class AppRepository private constructor(val context: Context): IAppRepository {
     {
         return remoteDataSource.getFiveDayForecast(lat,lon,apiKey)
     }
-    override suspend fun getDailyForecast(lat: Double, lon: Double, apiKey: String) : WeatherResponse
-    {
-        return remoteDataSource.getDailyForecast(lat,lon,apiKey)
-    }
+
 
     override suspend fun getAllForecastData(
         lat: Double,

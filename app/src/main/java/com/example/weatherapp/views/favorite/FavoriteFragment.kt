@@ -8,15 +8,23 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.R
+import com.example.weatherapp.ViewModel.CurrentForecastViewModel
+import com.example.weatherapp.ViewModel.CurrentForecastViewModelFactory
 import com.example.weatherapp.ViewModel.FavoriteViewModel
+import com.example.weatherapp.ViewModel.FavouriteViewModelFactory
+import com.example.weatherapp.database.AppDatabase
+import com.example.weatherapp.database.LocalDataSource
 import com.example.weatherapp.databinding.FragmentFavoriteBinding
+import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.FavoriteCoordinate
+import com.example.weatherapp.network.RemoteDataSource
 import kotlinx.coroutines.launch
 
 /**
@@ -27,7 +35,7 @@ import kotlinx.coroutines.launch
 class FavoriteFragment : Fragment() {
     private lateinit var navController : NavController
     private lateinit var binding: FragmentFavoriteBinding
-    private val favoriteViewModel : FavoriteViewModel by activityViewModels()
+    private lateinit var favoriteViewModel : FavoriteViewModel
     private lateinit var favoriteAdapter: FavoriteAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +58,12 @@ class FavoriteFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        favoriteViewModel = ViewModelProvider(this, FavouriteViewModelFactory(
+            AppRepository.getInstance(
+                RemoteDataSource(), LocalDataSource(
+            AppDatabase.getInstance(requireContext()))
+            ))
+        ).get(FavoriteViewModel::class.java)
         navController = Navigation.findNavController(view)
         binding.addFab.setOnClickListener {
             val bundle = Bundle()

@@ -8,7 +8,7 @@ import java.util.Calendar
 @Entity(tableName = "location_alert")
 data class LocationAlert(
     @PrimaryKey(autoGenerate = true)
-    val id : Int = 0,
+    var id : Int = 0,
     val longitude:Double,
     val latitude:Double,
     val calendar: Calendar

@@ -12,9 +12,12 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.example.weatherapp.MainActivity
 import com.example.weatherapp.R
+import com.example.weatherapp.database.AppDatabase
+import com.example.weatherapp.database.LocalDataSource
 import com.example.weatherapp.language
 import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.WeatherResponse
+import com.example.weatherapp.network.RemoteDataSource
 import com.example.weatherapp.views.home.HomeFragment
 import com.example.weatherapp.workers.AlertWorker
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +33,7 @@ class DismissNotificationReceiver  : BroadcastReceiver(){
         val id = intent.getIntExtra("id",0)
         val lat = intent.getDoubleExtra("lat",0.0)
         val long = intent.getDoubleExtra("long",0.0)
-        appRepo = AppRepository.getInstance(context!!)
+        appRepo = AppRepository.getInstance(RemoteDataSource(),LocalDataSource(AppDatabase.getInstance(context!!)))
         CoroutineScope(Dispatchers.IO).launch{
             val reId= appRepo.deleteAlertById(id)
             Log.i("TAG", "onReceive: $reId")

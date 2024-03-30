@@ -5,8 +5,9 @@ import com.example.weatherapp.model.FavoriteCoordinate
 import com.example.weatherapp.model.LocationAlert
 import kotlinx.coroutines.flow.Flow
 
-class LocalDataSource(context: Context) : ILocalDataSource {
-    private val appDatabase=AppDatabase.getInstance(context)
+class LocalDataSource(
+    private val appDatabase : AppDatabase,
+    ) : ILocalDataSource {
     private val favoriteCoordinateDAO = appDatabase.favoriteCoordinateDao()
     private val alertDao = appDatabase.alertDao()
     override suspend fun getAllFavorites() : Flow<List<FavoriteCoordinate>>{
