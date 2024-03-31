@@ -6,11 +6,13 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import com.example.weatherapp.CHANNEL_ID
 import com.example.weatherapp.MainActivity
+import com.example.weatherapp.NOTIFICATION_ID
 import com.example.weatherapp.R
 import com.example.weatherapp.database.AppDatabase
 import com.example.weatherapp.database.LocalDataSource
@@ -19,12 +21,11 @@ import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.WeatherResponse
 import com.example.weatherapp.network.RemoteDataSource
 import com.example.weatherapp.views.home.HomeFragment
-import com.example.weatherapp.workers.AlertWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DismissNotificationReceiver  : BroadcastReceiver(){
+class NotificationReceiver : BroadcastReceiver(){
     private lateinit var appRepo:AppRepository
     private lateinit var weatherData : WeatherResponse
     override fun onReceive(context: Context?, intent: Intent) {
@@ -35,6 +36,7 @@ class DismissNotificationReceiver  : BroadcastReceiver(){
         val long = intent.getDoubleExtra("long",0.0)
         appRepo = AppRepository.getInstance(RemoteDataSource(),LocalDataSource(AppDatabase.getInstance(context!!)))
         CoroutineScope(Dispatchers.IO).launch{
+
             val reId= appRepo.deleteAlertById(id)
             Log.i("TAG", "onReceive: $reId")
             getCurrentWeather(lat,long)
@@ -48,19 +50,22 @@ class DismissNotificationReceiver  : BroadcastReceiver(){
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra("Alert", "Alert")
         }
+        val bigTextStyle = NotificationCompat.BigTextStyle()
+            .bigText(content)
         val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-        val builder = NotificationCompat.Builder(context, AlertWorker.CHANNEL_ID)
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.cloud_2489384) // Update with your correct icon resource
             .setContentTitle(title)
             .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
+            .setStyle(bigTextStyle)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = "Alerts"
             val descriptionText = "Allows the application to send you alert notification"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(AlertWorker.CHANNEL_ID, name, importance).apply {
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
             }
             val notificationManager: NotificationManager =
@@ -70,7 +75,7 @@ class DismissNotificationReceiver  : BroadcastReceiver(){
 
         val notificationManager: NotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(AlertWorker.NOTIFICATION_ID, builder.build())
+        notificationManager.notify(NOTIFICATION_ID, builder.build())
 
     }
     private suspend fun getCurrentWeather(lat:Double, long:Double)

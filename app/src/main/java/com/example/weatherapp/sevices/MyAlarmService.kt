@@ -15,12 +15,13 @@ class MyAlarmService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        mediaPlayer = MediaPlayer.create(this, R.raw.ringtone1)
+        mediaPlayer = MediaPlayer.create(this, R.raw.num1)
+        mediaPlayer.isLooping = true
         mediaPlayer.start()
         return START_STICKY
     }
     override fun onDestroy() {
-        mediaPlayer.stop()
+        mediaPlayer.release()
         super.onDestroy()
     }
 }

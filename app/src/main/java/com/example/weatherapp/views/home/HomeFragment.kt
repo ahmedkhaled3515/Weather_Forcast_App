@@ -60,7 +60,6 @@ class HomeFragment : Fragment() {
     }
 //    private var language = "en"
     private lateinit var layout: ConstraintLayout
-
     var currentLat:Double?=null
     var currentLon:Double?=null
     private lateinit var weatherIcon:ImageView
@@ -75,7 +74,6 @@ class HomeFragment : Fragment() {
     private lateinit var dailyRV:RecyclerView
     private lateinit var locationText:TextView
     private var currentSuccess:Boolean?=false
-    private var fiveSuccess:Boolean?=false
     private lateinit var progress:ProgressBar
     private val sharedSettingsViewModel : SharedSettingsViewModel by activityViewModels()
     private lateinit var weatherSharedPreferences : WeatherSharedPreferences
@@ -112,7 +110,6 @@ class HomeFragment : Fragment() {
         viewModel = ViewModelProvider(this,CurrentForecastViewModelFactory(AppRepository.getInstance(RemoteDataSource(),LocalDataSource(
             AppDatabase.getInstance(requireContext()))))).get(CurrentForecastViewModel::class.java)
         initializeComponents(view)
-        val localDataSource = LocalDataSource(AppDatabase.getInstance(requireContext()))
 //        viewModel= ViewModelProvider(this)[CurrentForecastViewModel::class.java]
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
@@ -181,8 +178,6 @@ class HomeFragment : Fragment() {
     {
         val forecast = weatherResponse.current
         Log.i("TAG", "setUiComponents: ${sharedSettingsViewModel.language}")
-
-
         currentDegreeTV.text="${forecast.temp}°c"
         currentDescriptionTV.text=forecast.weather[0].description
         windSpeedTV.text=forecast.windSpeed.toString()
@@ -210,7 +205,6 @@ class HomeFragment : Fragment() {
                 submitList(weatherResponse.hourly.take(24))
             }
         }
-
     }
 //    private fun changeLanguage(languageCode: String) {
 //        val locale = Locale(languageCode)
@@ -255,6 +249,7 @@ class HomeFragment : Fragment() {
             //    ActivityCompat#requestPermissions
             requireActivity().requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION),1)
             // here to request the missing permissions, and then overriding
+
             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
@@ -279,6 +274,9 @@ class HomeFragment : Fragment() {
         if(!result)
         {
             requireActivity().requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION),1)
+        }
+        else{
+            requireActivity().recreate()
         }
     }
 }

@@ -3,6 +3,7 @@ package com.example.weatherapp.views.map
 import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
@@ -15,6 +16,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Button
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
@@ -42,8 +47,8 @@ import com.example.weatherapp.model.FavoriteCoordinate
 import com.example.weatherapp.model.LocationAlert
 import com.example.weatherapp.model.WeatherResponse
 import com.example.weatherapp.network.RemoteDataSource
-import com.example.weatherapp.sevices.DismissNotificationReceiver
-import com.example.weatherapp.workers.AlertWorker
+import com.example.weatherapp.sevices.MySoundAlarmReceiver
+import com.example.weatherapp.sevices.NotificationReceiver
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -98,7 +103,6 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
         navController = Navigation.findNavController(view)
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -179,8 +183,8 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
                     )
                     Log.i("TAG", "openTimeDialog: $locationAlert")
                     alertViewModel.addAlert(locationAlert)
-                    setAlarm(currentLongitude!!, currentLatitude!!, calendar.timeInMillis,locationAlert)
-                    navController.navigate(R.id.action_mapsFragment_to_alertFragment)
+
+                    showDialog(locationAlert)
                 } else {
                     Toast.makeText(requireContext(), "Can't pick passed time", Toast.LENGTH_SHORT).show()
                 }
@@ -192,11 +196,15 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
         timePickerDialog.show()
     }
     @SuppressLint("ScheduleExactAlarm")
-    fun setAlarm(long:Double, lat:Double, alertTime: Long, locationAlert: LocationAlert)
+    fun setAlarm(long:Double, lat:Double, alertTime: Long, locationAlert: LocationAlert,type:String)
     {
         Log.i("TAG", "setAlarm: $locationAlert")
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as? AlarmManager
-        val alarmIntent = Intent(context,DismissNotificationReceiver::class.java)
+        val alarmIntent : Intent = if (type == "notification") {
+            Intent(context,NotificationReceiver::class.java)
+        } else {
+            Intent(context,MySoundAlarmReceiver::class.java)
+        }
         alarmIntent.apply {
             putExtra("id",locationAlert.id)
             putExtra("lat",lat)
@@ -206,50 +214,90 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
         alarmManager?.setExact(AlarmManager.RTC_WAKEUP,alertTime,pendingIntent)
         Log.i("TAG", "setAlarm: helloo")
     }
-    private fun makeWorkRequest(long:Double,lat:Double,alertTime: Long,locationAlert: LocationAlert)
+    private fun showDialog(locationAlert : LocationAlert)
     {
-        Log.i("TAG", "makeWorkRequest: $locationAlert")
-        val currentTime = Calendar.getInstance().timeInMillis
-        val timeDiff = alertTime/1000 - currentTime/1000
-        val inputData = Data.Builder()
-            .putDouble("long",currentLongitude!!)
-            .putDouble("lat",currentLatitude!!)
-            .putInt("id",locationAlert.id)
-            .build()
-//        val alertWorkRequest : WorkRequest = OneTimeWorkRequest.from(AlertWorker::class.java)
-        val alertWorkRequest : WorkRequest = OneTimeWorkRequestBuilder<AlertWorker>()
-            .setInitialDelay(timeDiff,TimeUnit.SECONDS)
-            .setInputData(inputData)
-            .build()
-        val workManger : WorkManager = WorkManager.getInstance(requireContext())
-        workManger.enqueue(alertWorkRequest)
-        workManger.getWorkInfoByIdLiveData(alertWorkRequest.id).observe(requireActivity(), Observer {
-            workInfo ->
-            if (workInfo != null) {
-                when (workInfo.state) {
-                    WorkInfo.State.ENQUEUED -> {
-                        Log.i("TAG", "Work enqueued")
-                    }
-                    WorkInfo.State.RUNNING -> {
-                        Log.i("TAG", "Work running")
-                    }
-                    WorkInfo.State.SUCCEEDED -> {
-                        Log.i("TAG", "Work succeeded")
-                        Log.i("TAG", "makeWorkRequest: $locationAlert")
-                    }
-                    WorkInfo.State.FAILED -> {
-                        Log.i("TAG", "Work failed")
-                    }
-                    WorkInfo.State.CANCELLED -> {
-                        Log.i("TAG", "Work cancelled")
-                    }
-                    else -> {
-                        Log.i("TAG", "Work state unknown")
-                    }
-                }
-            } else {
-                Log.i("TAG", "WorkInfo is null")
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.alert_popup_window_layout)
+
+// Set width of the dialog
+        var width: Int  // Set your desired width here
+        val height = WindowManager.LayoutParams.WRAP_CONTENT
+        val layoutParams = WindowManager.LayoutParams().apply {
+            copyFrom(dialog.window?.attributes)
+            width = this@MapsFragment.resources.displayMetrics.widthPixels * 3 / 4 // Example: 75% of screen width
+        }
+        val radioGroup : RadioGroup = dialog.findViewById(R.id.radioGroup)
+        val saveButton : Button = dialog.findViewById(R.id.save_button)
+        var type = "notification"
+        dialog.window?.setLayout(width, height)
+        dialog.show()
+        radioGroup.setOnCheckedChangeListener(){radioGroup: RadioGroup, id: Int ->
+            if (id == R.id.notification_radio_button )
+            {
+                type = "notification"
             }
-        })
+            else if ( id == R.id.alarm_radio_button)
+            {
+                type = "alarm"
+            }
+        }
+        saveButton.setOnClickListener {
+            setAlarm(
+                currentLongitude!!,
+                currentLatitude!!,
+                calendar.timeInMillis,
+                locationAlert,
+                type
+            )
+            navController.navigate(R.id.action_mapsFragment_to_alertFragment)
+            dialog.hide()
+        }
+
     }
+//    private fun makeWorkRequest(long:Double,lat:Double,alertTime: Long,locationAlert: LocationAlert)
+//    {
+//        Log.i("TAG", "makeWorkRequest: $locationAlert")
+//        val currentTime = Calendar.getInstance().timeInMillis
+//        val timeDiff = alertTime/1000 - currentTime/1000
+//        val inputData = Data.Builder()
+//            .putDouble("long",currentLongitude!!)
+//            .putDouble("lat",currentLatitude!!)
+//            .putInt("id",locationAlert.id)
+//            .build()
+////        val alertWorkRequest : WorkRequest = OneTimeWorkRequest.from(AlertWorker::class.java)
+//        val alertWorkRequest : WorkRequest = OneTimeWorkRequestBuilder<AlertWorker>()
+//            .setInitialDelay(timeDiff,TimeUnit.SECONDS)
+//            .setInputData(inputData)
+//            .build()
+//        val workManger : WorkManager = WorkManager.getInstance(requireContext())
+//        workManger.enqueue(alertWorkRequest)
+//        workManger.getWorkInfoByIdLiveData(alertWorkRequest.id).observe(requireActivity(), Observer {
+//            workInfo ->
+//            if (workInfo != null) {
+//                when (workInfo.state) {
+//                    WorkInfo.State.ENQUEUED -> {
+//                        Log.i("TAG", "Work enqueued")
+//                    }
+//                    WorkInfo.State.RUNNING -> {
+//                        Log.i("TAG", "Work running")
+//                    }
+//                    WorkInfo.State.SUCCEEDED -> {
+//                        Log.i("TAG", "Work succeeded")
+//                        Log.i("TAG", "makeWorkRequest: $locationAlert")
+//                    }
+//                    WorkInfo.State.FAILED -> {
+//                        Log.i("TAG", "Work failed")
+//                    }
+//                    WorkInfo.State.CANCELLED -> {
+//                        Log.i("TAG", "Work cancelled")
+//                    }
+//                    else -> {
+//                        Log.i("TAG", "Work state unknown")
+//                    }
+//                }
+//            } else {
+//                Log.i("TAG", "WorkInfo is null")
+//            }
+//        })
+//    }
 }

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
@@ -17,11 +18,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.weatherapp.NetworkUtils
 import com.example.weatherapp.R
 import com.example.weatherapp.ViewModel.AlertViewModel
 import com.example.weatherapp.ViewModel.AlertViewModelFactory
-import com.example.weatherapp.ViewModel.CurrentForecastViewModel
-import com.example.weatherapp.ViewModel.CurrentForecastViewModelFactory
+
 import com.example.weatherapp.database.AppDatabase
 import com.example.weatherapp.database.LocalDataSource
 import com.example.weatherapp.databinding.FragmentAlertBinding
@@ -34,12 +35,14 @@ import kotlinx.coroutines.launch
 class AlertFragment : Fragment() {
     private lateinit var binding: FragmentAlertBinding
     private lateinit var alertViewModel : AlertViewModel
+    private lateinit var network : NetworkUtils
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentAlertBinding.inflate(inflater,container,false)
+        network = NetworkUtils
         return binding.root
     }
 
@@ -52,6 +55,10 @@ class AlertFragment : Fragment() {
             AppDatabase.getInstance(requireContext()))
             ))
         ).get(AlertViewModel::class.java)
+        val isAvailable= network.isInternetAvailable(requireContext())
+        if (!isAvailable) {
+            Toast.makeText(requireActivity(),"Not Internet",Toast.LENGTH_SHORT).show()
+        }
         addButtonAction()
         setRecyclerView()
     }
@@ -59,25 +66,32 @@ class AlertFragment : Fragment() {
     private fun addButtonAction()
     {
         binding.addAlertFab.setOnClickListener(){
-            if (ActivityCompat.checkSelfPermission(
-                    requireActivity(),
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                // TODO: Consider calling
-                // ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.POST_NOTIFICATIONS),2)
-                // public fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
-                //                                        grantResults: IntArray)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
+            if(network.isInternetAvailable(requireContext()))
+            {
+                if (ActivityCompat.checkSelfPermission(
+                        requireActivity(),
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    // TODO: Consider calling
+                    // ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.POST_NOTIFICATIONS),2)
+                    // public fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>,
+                    //                                        grantResults: IntArray)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                }
+                else
+                {
+                    val bundle = Bundle()
+                    bundle.putString("sourceFragment" , "alert")
+                    findNavController().navigate(R.id.action_alertFragment_to_mapsFragment,bundle)
+                }
             }
             else
             {
-                val bundle = Bundle()
-                bundle.putString("sourceFragment" , "alert")
-                findNavController().navigate(R.id.action_alertFragment_to_mapsFragment,bundle)
+                Toast.makeText(requireActivity(),"No Internet",Toast.LENGTH_SHORT).show()
             }
         }
     }

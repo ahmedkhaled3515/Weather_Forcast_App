@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.weatherapp.NetworkUtils
 import com.example.weatherapp.R
 import com.example.weatherapp.ViewModel.CurrentForecastViewModel
 import com.example.weatherapp.ViewModel.CurrentForecastViewModelFactory
@@ -37,16 +38,17 @@ class FavoriteFragment : Fragment() {
     private lateinit var binding: FragmentFavoriteBinding
     private lateinit var favoriteViewModel : FavoriteViewModel
     private lateinit var favoriteAdapter: FavoriteAdapter
+    private lateinit var network : NetworkUtils
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentFavoriteBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
+        network = NetworkUtils
         val bundle = arguments
         if(bundle != null)
         {
@@ -56,7 +58,6 @@ class FavoriteFragment : Fragment() {
         }
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         favoriteViewModel = ViewModelProvider(this, FavouriteViewModelFactory(
             AppRepository.getInstance(
@@ -65,10 +66,16 @@ class FavoriteFragment : Fragment() {
             ))
         ).get(FavoriteViewModel::class.java)
         navController = Navigation.findNavController(view)
-        binding.addFab.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putString("sourceFragment","favorite")
-            navController.navigate(R.id.action_favoriteFragment_to_mapsFragment,bundle)
+        if (network.isInternetAvailable(requireContext()))
+        {
+            binding.addFab.setOnClickListener {
+                val bundle = Bundle()
+                bundle.putString("sourceFragment","favorite")
+                navController.navigate(R.id.action_favoriteFragment_to_mapsFragment,bundle)
+            }
+        }
+        else{
+            Toast.makeText(requireActivity(),"No Internet",Toast.LENGTH_SHORT).show()
         }
         setRecyclerView()
     }
