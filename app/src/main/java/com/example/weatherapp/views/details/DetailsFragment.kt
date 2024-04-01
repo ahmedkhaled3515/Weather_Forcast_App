@@ -1,11 +1,10 @@
-package com.example.weatherapp.views.home
+package com.example.weatherapp.views.details
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
@@ -21,7 +20,6 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.recreate
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
@@ -43,6 +41,8 @@ import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.WeatherResponse
 import com.example.weatherapp.network.RemoteDataSource
 import com.example.weatherapp.units
+import com.example.weatherapp.views.home.FiveDaysForecastAdapter
+import com.example.weatherapp.views.home.HourlyForecastListAdapter
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -50,31 +50,39 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import java.util.Date
-import java.util.Locale
 
-class HomeFragment : Fragment() {
+// TODO: Rename parameter arguments, choose names that match
+// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+private const val ARG_PARAM1 = "param1"
+private const val ARG_PARAM2 = "param2"
+
+/**
+ * A simple [Fragment] subclass.
+ * Use the [DetailsFragment.newInstance] factory method to
+ * create an instance of this fragment.
+ */
+class DetailsFragment : Fragment() {
     private lateinit var sharedPreferences: SharedPreferences
     companion object{
-          const val API_KEY="172e0cbb3264b27530f5b6c425ffb29d"
+        const val API_KEY="172e0cbb3264b27530f5b6c425ffb29d"
     }
-//    private var language = "en"
+    //    private var language = "en"
     private lateinit var layout: ConstraintLayout
     var currentLat:Double?=null
     var currentLon:Double?=null
-    private lateinit var weatherIcon:ImageView
-    private lateinit var currentDegreeTV:TextView
-    private lateinit var currentDescriptionTV:TextView
-    private lateinit var windSpeedTV:TextView
-    private lateinit var rainChanceTV:TextView
-    private lateinit var pressureTV:TextView
-    private lateinit var humidityTV:TextView
-    private lateinit var viewModel:CurrentForecastViewModel
-    private lateinit var hourlyRV:RecyclerView
-    private lateinit var dailyRV:RecyclerView
-    private lateinit var locationText:TextView
+    private lateinit var weatherIcon: ImageView
+    private lateinit var currentDegreeTV: TextView
+    private lateinit var currentDescriptionTV: TextView
+    private lateinit var windSpeedTV: TextView
+    private lateinit var rainChanceTV: TextView
+    private lateinit var pressureTV: TextView
+    private lateinit var humidityTV: TextView
+    private lateinit var viewModel: CurrentForecastViewModel
+    private lateinit var hourlyRV: RecyclerView
+    private lateinit var dailyRV: RecyclerView
+    private lateinit var locationText: TextView
     private var currentSuccess:Boolean?=false
-    private lateinit var progress:ProgressBar
+    private lateinit var progress: ProgressBar
     private val sharedSettingsViewModel : SharedSettingsViewModel by activityViewModels()
     private lateinit var weatherSharedPreferences : WeatherSharedPreferences
     override fun onCreateView(
@@ -82,22 +90,24 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        viewModel = ViewModelProvider(this,CurrentForecastViewModelFactory(AppRepository.getInstance(RemoteDataSource(),LocalDataSource(
-            AppDatabase.getInstance(requireContext()))))).get(CurrentForecastViewModel::class.java)
+        viewModel = ViewModelProvider(this, CurrentForecastViewModelFactory(
+            AppRepository.getInstance(
+                RemoteDataSource(), LocalDataSource(
+            AppDatabase.getInstance(requireContext()))
+            ))
+        ).get(CurrentForecastViewModel::class.java)
         val bundle = arguments
-        if(bundle == null)
-        {
-            getLocation()
-        }
-        else
+        if(bundle != null)
         {
             val type = bundle.getString("type")
             currentLat = bundle.getDouble("lat")
             currentLon = bundle.getDouble("long")
-            viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY, units = units,language)
+            viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY, units = units,
+                language
+            )
         }
         weatherSharedPreferences = WeatherSharedPreferences
-        sharedPreferences = requireActivity().getSharedPreferences("myShared",Context.MODE_PRIVATE)
+        sharedPreferences = requireActivity().getSharedPreferences("myShared", Context.MODE_PRIVATE)
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -139,7 +149,7 @@ class HomeFragment : Fragment() {
                             {
                                 weatherSharedPreferences.getWeatherResponse(requireContext())
                                     ?.let { it1 -> setUiComponents(it1) }
-                                Toast.makeText(requireActivity(),"No Internet Offline Mode",Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireActivity(),"No Internet Offline Mode", Toast.LENGTH_SHORT).show()
                                 progress.visibility = View.GONE
                             }
                             else{
@@ -149,7 +159,7 @@ class HomeFragment : Fragment() {
 
                         }
                         else -> {
-                            Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireActivity(),"Loading", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -178,7 +188,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun isSameDay(timestamp: Long) : Boolean{
-        val calendar=Calendar.getInstance()
+        val calendar= Calendar.getInstance()
         calendar.timeInMillis=timestamp*1000
         Log.i("TAG", "isSameDay: ${calendar.time}")
         return Calendar.getInstance().get(Calendar.DATE) == calendar.get(Calendar.DATE)
@@ -215,79 +225,6 @@ class HomeFragment : Fragment() {
             adapter = HourlyForecastListAdapter(context).apply {
                 submitList(weatherResponse.hourly.take(24))
             }
-        }
-    }
-//    private fun changeLanguage(languageCode: String) {
-//        val locale = Locale(languageCode)
-//        Locale.setDefault(locale)
-//
-//        val config = Configuration(resources.configuration)
-//        config.setLocale(locale)
-//
-//        requireContext().resources.updateConfiguration(config, resources.displayMetrics)
-//
-//        // Recreate the activity to apply the language change
-////        requireActivity().recreate()
-//    }
-    private fun getLocation()
-    {
-        val fusedClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-        val locationRequest=  LocationRequest.Builder(5000).apply {
-            setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY)
-            setMaxUpdates(1)
-        }.build()
-        val locationCallback = object : LocationCallback(){
-            override fun onLocationResult(location: LocationResult) {
-                Log.i("TAG", "onLocationResult: ${location} ")
-                currentLon=location.lastLocation?.longitude
-                currentLat=location.lastLocation?.latitude
-                viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY, units = units,language)
-                val editor = sharedPreferences.edit()
-                editor.putFloat("currentLon",currentLon!!.toFloat())
-                editor.putFloat("currentLat",currentLat!!.toFloat())
-                editor.apply()
-            }
-        }
-        if (ActivityCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            requireActivity().requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION),1)
-            // here to request the missing permissions, and then overriding
-
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-        fusedClient.requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper())
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        var result = true
-        for(per in grantResults)
-        {
-            if(per != PackageManager.PERMISSION_GRANTED) {
-                result=false
-            }
-        }
-        if(!result)
-        {
-            requireActivity().requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION),1)
-        }
-        else{
-            requireActivity().recreate()
         }
     }
 }

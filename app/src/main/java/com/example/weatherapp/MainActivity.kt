@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Inflate the layout using view binding
-        binding = ActivityMainBinding.inflate(layoutInflater)
+//        binding = ActivityMainBinding.inflate(layoutInflater)
 //        val extras = intent.extras
 //        Log.i("TAG", "onCreate intent: ${intent.extras}")
 //        if(extras != null && extras.containsKey("Alert"))
@@ -41,42 +41,42 @@ class MainActivity : AppCompatActivity() {
 //        }else
 //        {
 //        }
-        setContentView(binding.root)
-
-
-        // Initialize NavController, DrawerLayout, and NavigationView
-        navController = findNavController(R.id.fragmentContainerView)
-        drawerLayout = binding.drawerLayout
-        navView = binding.navigationView
-
-        // Set up the navigation with NavController and DrawerLayout
-        appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
-//        showNotification(this,"ahmed","sonss")
-        lifecycleScope.launch {
-            sharedSettingsViewModel.language.collect(){
-                changeLanguage(it)
-            }
-        }
-
+//        setContentView(binding.root)
+//
+//
+//        // Initialize NavController, DrawerLayout, and NavigationView
+//        navController = findNavController(R.id.fragmentContainerView)
+//        drawerLayout = binding.drawerLayout
+//        navView = binding.navigationView
+//
+//        // Set up the navigation with NavController and DrawerLayout
+//        appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
+//        setupActionBarWithNavController(navController, appBarConfiguration)
+//        navView.setupWithNavController(navController)
+////        showNotification(this,"ahmed","sonss")
+//        lifecycleScope.launch {
+//            sharedSettingsViewModel.language.collect(){
+//                changeLanguage(it)
+//            }
+//        }
+//
+//    }
+//    private fun changeLanguage(languageCode: String) {
+//        val locale = Locale(languageCode)
+//        Locale.setDefault(locale)
+//
+//        val config = Configuration(resources.configuration)
+//        config.setLocale(locale)
+//
+//        resources.updateConfiguration(config, resources.displayMetrics)
+//
+//        // Recreate the activity to apply the language change
+////        requireActivity().recreate()
+//    }
+//
+//
+//    override fun onSupportNavigateUp(): Boolean {
+//        return  navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+//    }
     }
-    private fun changeLanguage(languageCode: String) {
-        val locale = Locale(languageCode)
-        Locale.setDefault(locale)
-
-        val config = Configuration(resources.configuration)
-        config.setLocale(locale)
-
-        resources.updateConfiguration(config, resources.displayMetrics)
-
-        // Recreate the activity to apply the language change
-//        requireActivity().recreate()
-    }
-
-
-    override fun onSupportNavigateUp(): Boolean {
-        return  navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-    }
-
 }

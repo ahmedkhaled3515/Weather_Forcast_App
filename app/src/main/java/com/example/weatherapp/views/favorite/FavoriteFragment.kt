@@ -91,7 +91,7 @@ class FavoriteFragment : Fragment() {
             {
                 favoriteViewModel.favoriteFlow.collect(){
                     binding.favoriteRV.apply {
-                        adapter= FavoriteAdapter(requireContext(), ::removeLocation).apply {
+                        adapter= FavoriteAdapter(requireContext(), ::removeLocation,::goToDetails).apply {
                             submitList(it)
                         }
                     }
@@ -107,6 +107,14 @@ class FavoriteFragment : Fragment() {
                 favoriteViewModel.deleteFavorite(coordinate)
             }
         }
+    }
+    private fun goToDetails(coordinate: FavoriteCoordinate){
+        val bundle = Bundle()
+        bundle.putDouble("lat",coordinate.latitude)
+        bundle.putDouble("long",coordinate.longitude)
+        bundle.putString("type","favorite")
+        navController.navigate(R.id.action_favoriteFragment_to_detailsFragment,bundle)
+
     }
 
 

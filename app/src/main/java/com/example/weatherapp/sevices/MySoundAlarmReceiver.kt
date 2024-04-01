@@ -11,6 +11,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.weatherapp.CHANNEL_ID
 import com.example.weatherapp.MainActivity
+import com.example.weatherapp.MainActivity2
 import com.example.weatherapp.NOTIFICATION_ID
 import com.example.weatherapp.R
 import com.example.weatherapp.database.AppDatabase
@@ -46,7 +47,7 @@ class MySoundAlarmReceiver : BroadcastReceiver(){
         }
     }
     private fun showNotification(context: Context, title: String, content: String) {
-        val intent = Intent(context, MainActivity::class.java).apply {
+        val intent = Intent(context, MainActivity2::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             putExtra("Alert", "Alert")
         }

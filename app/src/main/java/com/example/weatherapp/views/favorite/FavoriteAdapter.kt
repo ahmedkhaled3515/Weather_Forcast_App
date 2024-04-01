@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FavoriteCardLayoutBinding
 import com.example.weatherapp.model.FavoriteCoordinate
-class FavoriteAdapter(val context: Context , val removeLocation: (coord:FavoriteCoordinate)-> Unit) : ListAdapter<FavoriteCoordinate, FavoriteAdapter.ViewHolder>(
+class FavoriteAdapter(val context: Context , val removeLocation: (coord:FavoriteCoordinate)-> Unit,val goToDetails : (coord:FavoriteCoordinate)-> Unit) : ListAdapter<FavoriteCoordinate, FavoriteAdapter.ViewHolder>(
     FavoriteCoordinateDiffUtil()
 ) {
     class ViewHolder(val binding: FavoriteCardLayoutBinding ) : RecyclerView.ViewHolder(binding.root){
@@ -34,6 +34,9 @@ class FavoriteAdapter(val context: Context , val removeLocation: (coord:Favorite
         binding.favoriteLocationName.text="${address?.locality}, ${address?.adminArea}, ${address?.countryName}"
         binding.favoritRemoveButton.setOnClickListener(){
             showAlertDialog(favoriteCoordinate)
+        }
+        binding.root.setOnClickListener(){
+            goToDetails(favoriteCoordinate)
         }
     }
 
