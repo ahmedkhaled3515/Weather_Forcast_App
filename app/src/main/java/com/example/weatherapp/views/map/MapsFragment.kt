@@ -22,6 +22,7 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -39,6 +40,7 @@ import com.example.weatherapp.ViewModel.CurrentForecastViewModel
 import com.example.weatherapp.ViewModel.CurrentForecastViewModelFactory
 import com.example.weatherapp.ViewModel.FavoriteViewModel
 import com.example.weatherapp.ViewModel.FavouriteViewModelFactory
+import com.example.weatherapp.ViewModel.SharedSettingsViewModel
 import com.example.weatherapp.database.AppDatabase
 import com.example.weatherapp.database.LocalDataSource
 import com.example.weatherapp.databinding.FragmentMapsBinding
@@ -74,6 +76,7 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
     private var currentLongitude: Double? =null
     private lateinit var viewModel: CurrentForecastViewModel
     private lateinit var notificationWeather : WeatherResponse
+    private val sharedSettingsViewModel: SharedSettingsViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -134,7 +137,14 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
             {
                 favoriteViewModel.addFavorite(newFav)
                 navController.navigate(R.id.action_mapsFragment_to_favoriteFragment,bundle)
-            }else{
+            }
+            else if(incomingBundle?.getString("sourceFragment") == "settings")
+            {
+
+                bundle.putString("type","maps")
+                navController.navigate(R.id.action_mapsFragment_to_homeFragment,bundle)
+            }
+            else{
                 openDateDialog()
             }
         }

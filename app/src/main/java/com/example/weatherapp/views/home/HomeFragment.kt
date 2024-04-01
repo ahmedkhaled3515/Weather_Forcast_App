@@ -48,6 +48,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
@@ -88,13 +89,22 @@ class HomeFragment : Fragment() {
         if(bundle == null)
         {
             getLocation()
+
         }
         else
         {
             val type = bundle.getString("type")
-            currentLat = bundle.getDouble("lat")
-            currentLon = bundle.getDouble("long")
-            viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY, units = units,language)
+            if(type == "maps")
+            {
+                currentLat = bundle.getFloat("lat").toDouble()
+                currentLon = bundle.getFloat("long").toDouble()
+                Log.i("TAG", "onCreateView: $currentLon , $currentLat")
+                viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY, units = units,language)
+            }
+            else{
+                getLocation()
+            }
+
         }
         weatherSharedPreferences = WeatherSharedPreferences
         sharedPreferences = requireActivity().getSharedPreferences("myShared",Context.MODE_PRIVATE)

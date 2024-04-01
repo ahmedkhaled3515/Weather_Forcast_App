@@ -15,6 +15,8 @@ class SharedSettingsViewModel : ViewModel() {
     val language : SharedFlow<String> = _language.asSharedFlow()
     private val _unitsFlow = MutableSharedFlow<String>(replay = 1)
     val unitsFlow : SharedFlow<String> = _unitsFlow.asSharedFlow()
+    private val _location = MutableSharedFlow<String>(replay = 1)
+    val location : SharedFlow<String> = _location.asSharedFlow()
     fun changeLanguage(lang : String)
     {
         viewModelScope.launch {
@@ -27,6 +29,13 @@ class SharedSettingsViewModel : ViewModel() {
         viewModelScope.launch {
             Log.i("TAG", "changeUnit: $units ")
             _unitsFlow.emit(units)
+        }
+    }
+    fun changeLocation(type : String)
+    {
+        viewModelScope.launch {
+            Log.i("TAG", "changeLocation: $type")
+            _language.emit(type)
         }
     }
 

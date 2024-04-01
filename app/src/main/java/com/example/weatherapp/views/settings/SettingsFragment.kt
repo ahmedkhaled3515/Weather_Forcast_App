@@ -1,5 +1,6 @@
 package com.example.weatherapp.views.settings
 
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +11,10 @@ import android.view.ViewGroup
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
+import com.example.weatherapp.R
+import com.example.weatherapp.SettingsSharedPreferences
 import com.example.weatherapp.ViewModel.SharedSettingsViewModel
 import com.example.weatherapp.databinding.FragmentSettingsBinding
 import java.util.Locale
@@ -18,6 +23,7 @@ class SettingsFragment : Fragment() {
     var lang= "en"
     var unit = "metric"
     private val sharedSettingsViewModel : SharedSettingsViewModel by activityViewModels()
+    private lateinit var settingsSharedPreferences: SettingsSharedPreferences
     private lateinit var binding: FragmentSettingsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +34,7 @@ class SettingsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        settingsSharedPreferences = SettingsSharedPreferences
         binding = FragmentSettingsBinding.inflate(inflater, container, false)
         // Inflate the layout for this fragment
         return binding.root
@@ -37,6 +44,7 @@ class SettingsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         languageSwitch()
         temperatureSwitch()
+        locationSwitch(view)
         binding.recreateButton.setOnClickListener {
             Log.i("TAG", "onViewCreated: $lang")
             sharedSettingsViewModel.changeLanguage(lang)
@@ -45,18 +53,43 @@ class SettingsFragment : Fragment() {
             activity?.recreate()
         }
     }
+    private fun locationSwitch(view : View)
+    {
+        binding.locationRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+            when(checkedId){
+                binding.gpsRadioButton.id->{
+                    settingsSharedPreferences.saveLocation(requireContext(),"gps")
+                    sharedSettingsViewModel.changeLocation("gps")
+                    val bundle = Bundle()
+                    bundle.putString("type","gps")
+                    Navigation.findNavController(view).navigate(R.id.action_settingsFragment_to_homeFragment,bundle)
+                }
+                binding.mapRadioButton.id->{
+                    settingsSharedPreferences.saveLocation(requireContext(),"map")
+                    sharedSettingsViewModel.changeLocation("map")
+                    val bundle = Bundle()
+                    bundle.putString("sourceFragment","settings")
+                    Navigation.findNavController(view).navigate(R.id.action_settingsFragment_to_mapsFragment,bundle)
+                }
+            }
+        }
+    }
+
     private fun languageSwitch()
     {
 
         binding.languageRadioGroup.setOnCheckedChangeListener(){ radioGroup: RadioGroup, id: Int ->
             when (id) {
+
                 binding.arabicRadioButton.id -> {
                     Toast.makeText(requireContext(), "Arabic", Toast.LENGTH_SHORT).show()
                     lang = "ar"
+                    settingsSharedPreferences.saveLanguage(requireContext(),"ar")
                 }
                 binding.englishRadioButton.id -> {
                     Toast.makeText(requireContext(), "English", Toast.LENGTH_SHORT).show()
                     lang ="en"
+                    settingsSharedPreferences.saveLanguage(requireContext(),"en")
                 }
             }
         }
@@ -66,16 +99,22 @@ class SettingsFragment : Fragment() {
         binding.temperatureRadioGroup.setOnCheckedChangeListener(){ radioGroup: RadioGroup, id: Int ->
             when(id){
                 binding.celsiusRadioButton.id -> {
+
                     Toast.makeText(requireContext(), "Celsius", Toast.LENGTH_SHORT).show()
                     unit = "metric"
+                    settingsSharedPreferences.saveUnits(requireContext(),"metric")
                 }
                 binding.kelvinRadioButton.id->{
                     Toast.makeText(requireContext(), "Kelvin", Toast.LENGTH_SHORT).show()
                     unit = "standard"
+                    settingsSharedPreferences.saveUnits(requireContext(),"standard")
+
                 }
                 binding.fahrenhietRadioButton.id->{
                     Toast.makeText(requireContext(), "Fahrenheit", Toast.LENGTH_SHORT).show()
                     unit = "imperial"
+                    settingsSharedPreferences.saveUnits(requireContext(),"imperial")
+
                 }
             }
         }
