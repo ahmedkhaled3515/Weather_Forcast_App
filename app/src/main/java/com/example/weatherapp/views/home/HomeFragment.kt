@@ -9,6 +9,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.os.Looper
+import android.text.Layout
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -82,6 +83,7 @@ class HomeFragment : Fragment() {
     private val sharedSettingsViewModel : SharedSettingsViewModel by activityViewModels()
     private lateinit var weatherSharedPreferences : WeatherSharedPreferences
     private lateinit var settingsSharedPreferences: SettingsSharedPreferences
+    private lateinit var navView:View
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -117,6 +119,7 @@ class HomeFragment : Fragment() {
         }
         weatherSharedPreferences = WeatherSharedPreferences
         sharedPreferences = requireActivity().getSharedPreferences("myShared",Context.MODE_PRIVATE)
+        navView = inflater.inflate(R.layout.nav_header_main,container,false)
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
@@ -212,10 +215,24 @@ class HomeFragment : Fragment() {
     {
         val forecast = weatherResponse.current
         Log.i("TAG", "setUiComponents: $weatherResponse")
-        currentDegreeTV.text="${forecast.temp}°c"
+        if (units == "metric")
+        {
+            currentDegreeTV.text="${forecast.temp}°c"
+            windSpeedTV.text="${forecast.windSpeed}M/S"
+        }
+        else if (units == "imperial")
+        {
+            currentDegreeTV.text="${forecast.temp}°F"
+            windSpeedTV.text="${forecast.windSpeed}M/H"
+        }
+        else{
+            currentDegreeTV.text="${forecast.temp}°K"
+            windSpeedTV.text="${forecast.windSpeed}M/S"
+        }
+
         currentDescriptionTV.text=forecast.weather[0].description
-        windSpeedTV.text=forecast.windSpeed.toString()
-        rainChanceTV.text= forecast.rain?.toString()?:"No chance"
+
+        rainChanceTV.text= forecast.rain?.toString()?:getString(R.string.no_chance)
         pressureTV.text=forecast.pressure.toString()
         humidityTV.text=forecast.humidity.toString()
         locationText.text=weatherResponse.timezone
@@ -223,6 +240,7 @@ class HomeFragment : Fragment() {
         Glide.with(this)
             .load("https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png")
             .into(weatherIcon)
+
         dailyRV.apply {
             layoutManager= LinearLayoutManager(context).apply {
                 orientation= LinearLayoutManager.VERTICAL

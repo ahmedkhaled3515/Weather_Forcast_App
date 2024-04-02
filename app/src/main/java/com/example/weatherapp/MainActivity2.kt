@@ -1,7 +1,9 @@
 package com.example.weatherapp
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
+import androidx.activity.viewModels
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.navigation.findNavController
@@ -11,13 +13,15 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.AppCompatActivity
+import com.example.weatherapp.ViewModel.SharedSettingsViewModel
 import com.example.weatherapp.databinding.ActivityMain2Binding
+import java.util.Locale
 
 class MainActivity2 : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMain2Binding
-
+    private val sharedSettingsViewModel : SharedSettingsViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -40,7 +44,9 @@ class MainActivity2 : AppCompatActivity() {
         val settingsSharedPreferences = SettingsSharedPreferences
         settingsSharedPreferences.saveLanguage(this,"en")
         settingsSharedPreferences.saveUnits(this,"metric")
+//        changeLanguage(settingsSharedPreferences.getLanguage(this)!!)
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -52,4 +58,16 @@ class MainActivity2 : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+//    private fun changeLanguage(languageCode: String) {
+//        val locale = Locale(languageCode)
+//        Locale.setDefault(locale)
+//
+//        val config = Configuration(resources.configuration)
+//        config.setLocale(locale)
+//
+//        resources.updateConfiguration(config, resources.displayMetrics)
+//
+//        // Recreate the activity to apply the language change
+////        requireActivity().recreate()
+//    }
 }

@@ -2,6 +2,7 @@ package com.example.weatherapp.views.home
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weatherapp.R
+import com.example.weatherapp.SettingsSharedPreferences
 import com.example.weatherapp.model.DailyWeather
 import com.example.weatherapp.model.HourlyWeather
 import java.time.LocalTime
@@ -22,9 +24,9 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 
-class HourlyForecastListAdapter(val context: Context) : ListAdapter<HourlyWeather, HourlyForecastListAdapter.ViewHolder>(
-    HourlyWeatherDiffUtil()
-) {
+class HourlyForecastListAdapter(val context: Context) : ListAdapter<HourlyWeather, HourlyForecastListAdapter.ViewHolder>(HourlyWeatherDiffUtil()) {
+    private lateinit var settingSharedPreferences: SettingsSharedPreferences
+    private lateinit var units : String
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val timeTV:TextView=view.findViewById(R.id.time_value_text)
         val timeIcon:ImageView=view.findViewById(R.id.time_icon)
@@ -34,6 +36,8 @@ class HourlyForecastListAdapter(val context: Context) : ListAdapter<HourlyWeathe
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.hourly_card_layout,parent,false)
+        settingSharedPreferences = SettingsSharedPreferences
+        units = settingSharedPreferences.getUnits(context)!!
         return ViewHolder(view)
     }
 
@@ -62,7 +66,18 @@ class HourlyForecastListAdapter(val context: Context) : ListAdapter<HourlyWeathe
 
         }
         Log.i("TAG", "onBindViewHolder: ${forecast.dt}")
-        holder.hourlyDegree.text= "${forecast.temp}°C"
+        if (units == "metric")
+        {
+            holder.hourlyDegree.text= "${forecast.temp}°C"
+        }
+        else if (units == "imperial")
+        {
+            holder.hourlyDegree.text= "${forecast.temp}°F"
+        }
+        else{
+            holder.hourlyDegree.text= "${forecast.temp}°K"
+        }
+
         holder.timeTV.text= if(calendar.get(Calendar.HOUR) == 0)
         {
            "12 $period"

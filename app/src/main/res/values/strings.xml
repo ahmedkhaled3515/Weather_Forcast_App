@@ -39,4 +39,5 @@
     <string name="location_settings">Location Setting</string>
     <string name="GPS">GPS</string>
     <string name="maps">Map</string>
+    <string name="no_chance">No Chance</string>
 </resources>
