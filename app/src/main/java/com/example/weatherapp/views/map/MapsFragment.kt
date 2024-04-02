@@ -211,9 +211,13 @@ class MapsFragment : Fragment(),OnMapReadyCallback{
         Log.i("TAG", "setAlarm: $locationAlert")
         val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as? AlarmManager
         val alarmIntent : Intent = if (type == "notification") {
-            Intent(context,NotificationReceiver::class.java)
+            Intent(context,MySoundAlarmReceiver::class.java).apply {
+                putExtra("type","notification")
+            }
         } else {
-            Intent(context,MySoundAlarmReceiver::class.java)
+            Intent(context,MySoundAlarmReceiver::class.java).apply {
+                putExtra("type","alarm")
+            }
         }
         alarmIntent.apply {
             putExtra("id",locationAlert.id)

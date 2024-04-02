@@ -39,11 +39,20 @@ android {
     buildFeatures{
         viewBinding=true
     }
+    sourceSets {
+        getByName("main") {
+            assets {
+                srcDirs("src\\main\\assets", "src\\main\\assets\\2")
+            }
+        }
+    }
 
 }
 
 
 dependencies {
+    implementation ("com.airbnb.android:lottie:4.2.0")
+
     //AndroidX
 //    implementation("androidx.core:core-ktx:2.2.0")
     //WorkManager

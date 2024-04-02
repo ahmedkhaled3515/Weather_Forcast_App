@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
+import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -27,6 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.example.weatherapp.ApiState
 import com.example.weatherapp.R
@@ -69,7 +71,7 @@ class DetailsFragment : Fragment() {
     private var language : String? = "en"
     private var units : String? = "metric"
     private lateinit var settingsSharedPreferences: SettingsSharedPreferences
-    private lateinit var layout: ConstraintLayout
+    private lateinit var screen: ScrollView
     var currentLat:Double?=null
     var currentLon:Double?=null
     private lateinit var weatherIcon: ImageView
@@ -84,7 +86,7 @@ class DetailsFragment : Fragment() {
     private lateinit var dailyRV: RecyclerView
     private lateinit var locationText: TextView
     private var currentSuccess:Boolean?=false
-    private lateinit var progress: ProgressBar
+    private lateinit var progress: LottieAnimationView
     private val sharedSettingsViewModel : SharedSettingsViewModel by activityViewModels()
     private lateinit var weatherSharedPreferences : WeatherSharedPreferences
     override fun onCreateView(
@@ -129,8 +131,8 @@ class DetailsFragment : Fragment() {
         weatherIcon=view.findViewById(R.id.weather_image)
         locationText=view.findViewById(R.id.location_textview)
         dailyRV=view.findViewById(R.id.days_RV)
-        layout=view.findViewById(R.id.frameLayout)
-        progress=view.findViewById(R.id.progress_bar)
+        screen=view.findViewById(R.id.screen)
+        progress=view.findViewById(R.id.lottieAnimationView)
     }
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -147,6 +149,7 @@ class DetailsFragment : Fragment() {
                             setUiComponents(it.data)
                             currentSuccess=true
                             progress.visibility=View.GONE
+                            screen.visibility =View.VISIBLE
 
                         }
                         is ApiState.Failure ->{
@@ -154,17 +157,20 @@ class DetailsFragment : Fragment() {
                             {
                                 weatherSharedPreferences.getWeatherResponse(requireContext())
                                     ?.let { it1 -> setUiComponents(it1) }
-                                Toast.makeText(requireActivity(),"No Internet Offline Mode", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(requireActivity(),"No Internet Offline Mode",Toast.LENGTH_SHORT).show()
                                 progress.visibility = View.GONE
                             }
                             else{
                                 Toast.makeText(requireActivity(), "Failed", Toast.LENGTH_SHORT).show()
                                 it.msg.printStackTrace()
+
                             }
 
                         }
                         else -> {
-                            Toast.makeText(requireActivity(),"Loading", Toast.LENGTH_SHORT).show()
+                            progress.visibility = View.VISIBLE
+                            screen . visibility = View.GONE
+                            Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

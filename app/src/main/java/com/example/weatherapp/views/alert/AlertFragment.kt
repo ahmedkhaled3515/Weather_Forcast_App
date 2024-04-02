@@ -1,6 +1,10 @@
 package com.example.weatherapp.views.alert
 
 import android.Manifest
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -29,6 +33,7 @@ import com.example.weatherapp.databinding.FragmentAlertBinding
 import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.LocationAlert
 import com.example.weatherapp.network.RemoteDataSource
+import com.example.weatherapp.sevices.MySoundAlarmReceiver
 import kotlinx.coroutines.launch
 
 
@@ -136,6 +141,10 @@ class AlertFragment : Fragment() {
     }
     private fun remove(locationAlert: LocationAlert){
         alertViewModel.deleteAlert(locationAlert)
+        val alarmManager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, MySoundAlarmReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(context,locationAlert.id,intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        alarmManager.cancel(pendingIntent)
     }
 
 }

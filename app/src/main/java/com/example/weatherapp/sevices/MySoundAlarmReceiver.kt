@@ -42,8 +42,11 @@ class MySoundAlarmReceiver : BroadcastReceiver(){
 
         appRepo = AppRepository.getInstance(RemoteDataSource(),LocalDataSource(AppDatabase.getInstance(context!!)))
         CoroutineScope(Dispatchers.IO).launch{
-            val serviceIntent = Intent(context, MyAlarmService::class.java)
-            context.startService(serviceIntent)
+            if(intent.getStringExtra("type") == "alarm")
+            {
+                val serviceIntent = Intent(context, MyAlarmService::class.java)
+                context.startService(serviceIntent)
+            }
             val reId= appRepo.deleteAlertById(id)
             Log.i("TAG", "onReceive: $reId")
             getCurrentWeather(lat,long)

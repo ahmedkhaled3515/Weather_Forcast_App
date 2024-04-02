@@ -1,8 +1,12 @@
 package com.example.weatherapp
 
+import android.content.Intent
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
 import androidx.activity.viewModels
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.activityViewModels
@@ -13,6 +17,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.airbnb.lottie.LottieAnimationView
 import com.example.weatherapp.ViewModel.SharedSettingsViewModel
 import com.example.weatherapp.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationView
@@ -29,54 +34,15 @@ class MainActivity : AppCompatActivity() {
     private val sharedSettingsViewModel : SharedSettingsViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Inflate the layout using view binding
-//        binding = ActivityMainBinding.inflate(layoutInflater)
-//        val extras = intent.extras
-//        Log.i("TAG", "onCreate intent: ${intent.extras}")
-//        if(extras != null && extras.containsKey("Alert"))
-//        {
-//            supportFragmentManager.beginTransaction()
-//                .replace(R.id.fragmentContainerView,AlertFragment())
-//                .commit()
-//        }else
-//        {
-//        }
-//        setContentView(binding.root)
-//
-//
-//        // Initialize NavController, DrawerLayout, and NavigationView
-//        navController = findNavController(R.id.fragmentContainerView)
-//        drawerLayout = binding.drawerLayout
-//        navView = binding.navigationView
-//
-//        // Set up the navigation with NavController and DrawerLayout
-//        appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
-//        setupActionBarWithNavController(navController, appBarConfiguration)
-//        navView.setupWithNavController(navController)
-////        showNotification(this,"ahmed","sonss")
-//        lifecycleScope.launch {
-//            sharedSettingsViewModel.language.collect(){
-//                changeLanguage(it)
-//            }
-//        }
-//
-//    }
-//    private fun changeLanguage(languageCode: String) {
-//        val locale = Locale(languageCode)
-//        Locale.setDefault(locale)
-//
-//        val config = Configuration(resources.configuration)
-//        config.setLocale(locale)
-//
-//        resources.updateConfiguration(config, resources.displayMetrics)
-//
-//        // Recreate the activity to apply the language change
-////        requireActivity().recreate()
-//    }
-//
-//
-//    override fun onSupportNavigateUp(): Boolean {
-//        return  navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
-//    }
+        setContentView(R.layout.activity_main)
+        val anim = findViewById<LottieAnimationView>(R.id.splash)
+        anim.visibility= View.VISIBLE
+        anim.playAnimation()
+        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+
+            val intent = Intent(this,MainActivity2::class.java)
+            startActivity(intent)
+        },2000)
+
     }
 }
