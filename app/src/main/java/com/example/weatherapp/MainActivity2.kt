@@ -41,6 +41,7 @@ class MainActivity2 : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
         val settingsSharedPreferences = SettingsSharedPreferences
         settingsSharedPreferences.saveLanguage(this,"en")
         settingsSharedPreferences.saveUnits(this,"metric")
@@ -57,6 +58,10 @@ class MainActivity2 : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    fun updateActionBarTitle(title: String) {
+        supportActionBar?.title = title
     }
 //    private fun changeLanguage(languageCode: String) {
 //        val locale = Locale(languageCode)

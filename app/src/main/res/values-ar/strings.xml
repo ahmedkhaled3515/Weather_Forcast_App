@@ -29,4 +29,5 @@
     <string name="GPS">الموقع الحالي</string>
     <string name="maps">الخريطة</string>
     <string name="no_chance">لا يوجد</string>
+    <string name="details_text">التفاصيل</string>
 </resources>

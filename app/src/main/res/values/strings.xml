@@ -40,4 +40,5 @@
     <string name="GPS">GPS</string>
     <string name="maps">Map</string>
     <string name="no_chance">No Chance</string>
+    <string name="details_text">Details</string>
 </resources>

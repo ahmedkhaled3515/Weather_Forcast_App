@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import com.example.weatherapp.ApiState
+import com.example.weatherapp.MainActivity2
 import com.example.weatherapp.R
 import com.example.weatherapp.SettingsSharedPreferences
 import com.example.weatherapp.ViewModel.CurrentForecastViewModel
@@ -141,7 +142,7 @@ class HomeFragment : Fragment() {
     }
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-
+        (activity as MainActivity2).updateActionBarTitle("Your Fragment Title")
         initializeComponents(view)
 //        viewModel= ViewModelProvider(this)[CurrentForecastViewModel::class.java]
         viewLifecycleOwner.lifecycleScope.launch {
