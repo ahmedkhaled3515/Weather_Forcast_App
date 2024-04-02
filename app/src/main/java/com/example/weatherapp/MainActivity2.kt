@@ -37,6 +37,9 @@ class MainActivity2 : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        val settingsSharedPreferences = SettingsSharedPreferences
+        settingsSharedPreferences.saveLanguage(this,"en")
+        settingsSharedPreferences.saveUnits(this,"metric")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

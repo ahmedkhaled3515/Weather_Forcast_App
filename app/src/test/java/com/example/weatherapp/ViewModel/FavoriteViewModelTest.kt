@@ -1,6 +1,7 @@
 package com.example.weatherapp.ViewModel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.weatherapp.model.FakeAppRepository
 import com.example.weatherapp.model.FavoriteCoordinate
 import com.example.weatherapp.model.IAppRepository
@@ -17,31 +18,27 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
 
-@OptIn(ExperimentalCoroutinesApi::class)
-
+@RunWith(AndroidJUnit4::class)
 class FavoriteViewModelTest{
     @get:Rule
     val rule = InstantTaskExecutorRule()
-
     private lateinit var appRepo: IAppRepository
     private lateinit var favoriteViewModel: FavoriteViewModel
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val testScope = TestCoroutineScope(testDispatcher)
+
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(testDispatcher)
         appRepo = FakeAppRepository()
         favoriteViewModel = FavoriteViewModel(appRepo)
     }
 
     @After
     fun tearDown() {
-        testDispatcher.cleanupTestCoroutines()
     }
     @Test
-    fun addAndGetAllFavoritesTest_addOneFavorite_returnSize1() = testScope.runBlockingTest{
+    fun addAndGetAllFavoritesTest_addOneFavorite_returnSize1() = runBlockingTest{
         //Given
         val favoriteCoordinate = FavoriteCoordinate(longitude = 0.0, latitude = 0.0)
         favoriteViewModel.addFavorite(favoriteCoordinate)
@@ -51,7 +48,7 @@ class FavoriteViewModelTest{
         Assert.assertEquals(1,size)
     }
     @Test
-    fun deleteFavoriteTest_addOneDeleteFavorite_returnSize0() = testScope.runBlockingTest{
+    fun deleteFavoriteTest_addOneDeleteFavorite_returnSize0() = runBlockingTest{
         //Given
         val favoriteCoordinate = FavoriteCoordinate(longitude = 0.0, latitude = 0.0)
         favoriteViewModel.addFavorite(favoriteCoordinate)

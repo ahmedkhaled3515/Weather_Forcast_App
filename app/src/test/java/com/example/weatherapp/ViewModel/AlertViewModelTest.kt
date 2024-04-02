@@ -1,6 +1,7 @@
 package com.example.weatherapp.ViewModel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.weatherapp.ViewModel.AlertViewModel
 import com.example.weatherapp.model.FakeAppRepository
 import com.example.weatherapp.model.IAppRepository
@@ -13,9 +14,10 @@ import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.setMain
 import org.junit.*
+import org.junit.runner.RunWith
 import java.util.Calendar
 
-@ExperimentalCoroutinesApi
+@RunWith(AndroidJUnit4::class)
 class AlertViewModelTest {
 
     @get:Rule
@@ -23,23 +25,20 @@ class AlertViewModelTest {
 
     private lateinit var appRepo: IAppRepository
     private lateinit var alertViewModel: AlertViewModel
-    private val testDispatcher = TestCoroutineDispatcher()
-    private val testScope = TestCoroutineScope(testDispatcher)
+
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(testDispatcher)
         appRepo = FakeAppRepository()
         alertViewModel = AlertViewModel(appRepo)
     }
 
     @After
     fun tearDown() {
-        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test
-    fun addAlertAndGetAllAlertsTest_addOneAlert_returnSize1() = testScope.runBlockingTest {
+    fun addAlertAndGetAllAlertsTest_addOneAlert_returnSize1() = runBlockingTest {
         // Given
         val locationAlert = LocationAlert(longitude = 0.0, latitude = 0.0, calendar = Calendar.getInstance())
         alertViewModel.addAlert(locationAlert)
@@ -50,7 +49,7 @@ class AlertViewModelTest {
     }
 
     @Test
-    fun deleteAlertTest_addOneDeleteOne_returnSize0() = testScope.runBlockingTest {
+    fun deleteAlertTest_addOneDeleteOne_returnSize0() = runBlockingTest {
         // Given
         val locationAlert = LocationAlert(longitude = 0.0, latitude = 0.0, calendar = Calendar.getInstance())
         alertViewModel.addAlert(locationAlert)

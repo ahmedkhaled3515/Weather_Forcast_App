@@ -23,4 +23,9 @@
     <string name="alert_description">هل انت متأكد من مسح هذا الموقع</string>
     <string name="ok_text">حسنا</string>
     <string name="cancel_text">الغاء</string>
+    <string name="notification_text">اشعار</string>
+    <string name="alarm_text">منبه</string>
+    <string name="location_settings">اعدادات الموقع</string>
+    <string name="GPS">الموقع الحالي</string>
+    <string name="maps">الخريطة</string>
 </resources>

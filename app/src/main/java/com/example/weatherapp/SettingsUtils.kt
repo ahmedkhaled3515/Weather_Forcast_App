@@ -3,8 +3,7 @@ package com.example.weatherapp
 import android.content.Context
 import android.content.SharedPreferences
 
-var language : String = "en"
-var units : String = "metric"
+
 object SettingsSharedPreferences {
 
     private const val PREF_NAME = "SettingsPref"

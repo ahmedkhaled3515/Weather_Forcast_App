@@ -32,17 +32,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weatherapp.ApiState
 import com.example.weatherapp.R
+import com.example.weatherapp.SettingsSharedPreferences
 import com.example.weatherapp.ViewModel.CurrentForecastViewModel
 import com.example.weatherapp.ViewModel.CurrentForecastViewModelFactory
 import com.example.weatherapp.ViewModel.SharedSettingsViewModel
 import com.example.weatherapp.WeatherSharedPreferences
 import com.example.weatherapp.database.AppDatabase
 import com.example.weatherapp.database.LocalDataSource
-import com.example.weatherapp.language
 import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.WeatherResponse
 import com.example.weatherapp.network.RemoteDataSource
-import com.example.weatherapp.units
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -60,6 +59,8 @@ class HomeFragment : Fragment() {
           const val API_KEY="172e0cbb3264b27530f5b6c425ffb29d"
     }
 //    private var language = "en"
+    private var language : String? = "en"
+    private var units : String? = "metric"
     private lateinit var layout: ConstraintLayout
     var currentLat:Double?=null
     var currentLon:Double?=null
@@ -78,10 +79,16 @@ class HomeFragment : Fragment() {
     private lateinit var progress:ProgressBar
     private val sharedSettingsViewModel : SharedSettingsViewModel by activityViewModels()
     private lateinit var weatherSharedPreferences : WeatherSharedPreferences
+    private lateinit var settingsSharedPreferences: SettingsSharedPreferences
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        settingsSharedPreferences = SettingsSharedPreferences
+//        settingsSharedPreferences.saveLanguage(requireContext(),"en")
+//        settingsSharedPreferences.saveUnits(requireContext(),"metric")
+        language = settingsSharedPreferences.getLanguage(requireContext())
+        units = settingsSharedPreferences.getUnits(requireContext())
         // Inflate the layout for this fragment
         viewModel = ViewModelProvider(this,CurrentForecastViewModelFactory(AppRepository.getInstance(RemoteDataSource(),LocalDataSource(
             AppDatabase.getInstance(requireContext()))))).get(CurrentForecastViewModel::class.java)
@@ -99,7 +106,7 @@ class HomeFragment : Fragment() {
                 currentLat = bundle.getFloat("lat").toDouble()
                 currentLon = bundle.getFloat("long").toDouble()
                 Log.i("TAG", "onCreateView: $currentLon , $currentLat")
-                viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY, units = units,language)
+                viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY, units = units!!,language!!)
             }
             else{
                 getLocation()
@@ -198,7 +205,7 @@ class HomeFragment : Fragment() {
     private fun setUiComponents(weatherResponse: WeatherResponse)
     {
         val forecast = weatherResponse.current
-        Log.i("TAG", "setUiComponents: ${sharedSettingsViewModel.language}")
+        Log.i("TAG", "setUiComponents: $weatherResponse")
         currentDegreeTV.text="${forecast.temp}°c"
         currentDescriptionTV.text=forecast.weather[0].description
         windSpeedTV.text=forecast.windSpeed.toString()
@@ -251,7 +258,7 @@ class HomeFragment : Fragment() {
                 Log.i("TAG", "onLocationResult: ${location} ")
                 currentLon=location.lastLocation?.longitude
                 currentLat=location.lastLocation?.latitude
-                viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY, units = units,language)
+                viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY, units = units!!,language!!)
                 val editor = sharedPreferences.edit()
                 editor.putFloat("currentLon",currentLon!!.toFloat())
                 editor.putFloat("currentLat",currentLat!!.toFloat())

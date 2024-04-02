@@ -35,15 +35,16 @@ class FakeLocalDataSource(
     }
 
     override suspend fun addAlert(locationAlert: LocationAlert) {
-        // Ensure that the ID is unique
-        if (locationAlert.id == 0) {
-            locationAlert.id = ++alertIdCounter
-        }
-        // Add alert only if it's not already in the list
-        if (!alerts.contains(locationAlert)) {
-            alerts.add(locationAlert)
-        } else {
-        }
+//        // Ensure that the ID is unique
+//        if (locationAlert.id == 0) {
+//            locationAlert.id = ++alertIdCounter
+//        }
+//        // Add alert only if it's not already in the list
+//        if (!alerts.contains(locationAlert)) {
+//            alerts.add(locationAlert)
+//        } else {
+//        }
+        alerts.add(locationAlert)
     }
 
     override suspend fun deleteAlert(locationAlert: LocationAlert): Int {

@@ -22,9 +22,11 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 import java.util.Calendar
 
-
+@RunWith(JUnit4::class)
 class AppRepositoryTest {
 
     @get:Rule
@@ -43,8 +45,8 @@ class AppRepositoryTest {
     @Test
     fun addFavoriteAndGetAllFavoritesTest_addTwoFavorite_sizeEqualTwo() = runBlockingTest{
         //Given
-        val favoriteCoordinate = FavoriteCoordinate(longitude = 0.0, latitude = 0.0)
-        val favoriteCoordinate2 = FavoriteCoordinate(longitude = 0.2, latitude = 0.3)
+        val favoriteCoordinate = FavoriteCoordinate(id=1,longitude = 0.0, latitude = 0.0)
+        val favoriteCoordinate2 = FavoriteCoordinate(id = 2, longitude = 0.2, latitude = 0.3)
         appRepository.addFavorite(favoriteCoordinate)
         appRepository.addFavorite(favoriteCoordinate2)
         //When
@@ -55,8 +57,8 @@ class AppRepositoryTest {
     @Test
     fun deleteFavoriteTest_addTwoDeleteOne_sizeEqualOne() = runBlockingTest {
         //Given
-        val favoriteCoordinate1 = FavoriteCoordinate(longitude = 0.0, latitude = 0.0)
-        val favoriteCoordinate2 = FavoriteCoordinate(longitude = 2.0, latitude = 1.0)
+        val favoriteCoordinate1 = FavoriteCoordinate(id=1,longitude = 0.0, latitude = 0.0)
+        val favoriteCoordinate2 = FavoriteCoordinate(id =2, longitude = 0.2, latitude = 0.3)
         //When
 //        Log.i("TAG", "deleteFavoriteTest_addTwoDeleteOne_sizeEqualOne: $favoriteCoordinate1")
         appRepository.addFavorite(favoriteCoordinate1)
@@ -74,7 +76,7 @@ class AppRepositoryTest {
         //Given
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = 55
-        val locationAlert = LocationAlert(longitude = 0.0, latitude = 0.0, calendar =  Calendar.getInstance())
+        val locationAlert = LocationAlert(longitude = 0.0, latitude = 0.0, calendar = Calendar.getInstance())
         val locationAlert2 = LocationAlert(longitude = 2.0, latitude = 4.0, calendar = calendar)
         //When
         appRepository.addAlert(locationAlert)
@@ -89,8 +91,8 @@ class AppRepositoryTest {
         //Given
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = 55
-        val locationAlert = LocationAlert(5,0.0,0.0, Calendar.getInstance())
-        val locationAlert2 = LocationAlert(6,2.0,4.0,calendar)
+        val locationAlert = LocationAlert(id = 1, longitude = 0.0, latitude = 0.0, calendar =  Calendar.getInstance())
+        val locationAlert2 = LocationAlert(id = 2, longitude = 2.0, latitude = 4.0, calendar = calendar)
         //When
         appRepository.addAlert(locationAlert)
         appRepository.addAlert(locationAlert2)
@@ -102,7 +104,7 @@ class AppRepositoryTest {
     }
     @Test
     fun getLastInsertedRowTest_addOneDeleteWithId1_returnId1() = runBlockingTest {
-        val locationAlert2 = LocationAlert(longitude = 2.0, latitude = 4.0, calendar =  Calendar.getInstance())
+        val locationAlert2 = LocationAlert(id =1,longitude = 2.0, latitude = 4.0, calendar =  Calendar.getInstance())
         appRepository.addAlert(locationAlert2)
         val index = appRepository.getLastInsertedAlert().first()
         Assert.assertEquals(locationAlert2,index)

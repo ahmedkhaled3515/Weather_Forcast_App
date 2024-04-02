@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -14,9 +15,9 @@ import com.example.weatherapp.MainActivity
 import com.example.weatherapp.MainActivity2
 import com.example.weatherapp.NOTIFICATION_ID
 import com.example.weatherapp.R
+import com.example.weatherapp.SettingsSharedPreferences
 import com.example.weatherapp.database.AppDatabase
 import com.example.weatherapp.database.LocalDataSource
-import com.example.weatherapp.language
 import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.WeatherResponse
 import com.example.weatherapp.network.RemoteDataSource
@@ -28,12 +29,17 @@ import kotlinx.coroutines.launch
 class MySoundAlarmReceiver : BroadcastReceiver(){
     private lateinit var appRepo:AppRepository
     private lateinit var weatherData : WeatherResponse
+    private var language : String? = "en"
+    private lateinit var settingSharedPreferences: SettingsSharedPreferences
     override fun onReceive(context: Context?, intent: Intent) {
 //        val stopIntent = Intent(context, MyAlarmService::class.java)
 //        context?.stopService(stopIntent)
+        settingSharedPreferences = SettingsSharedPreferences
+        language = settingSharedPreferences.getLanguage(context!!)
         val id = intent.getIntExtra("id",0)
         val lat = intent.getDoubleExtra("lat",0.0)
         val long = intent.getDoubleExtra("long",0.0)
+
         appRepo = AppRepository.getInstance(RemoteDataSource(),LocalDataSource(AppDatabase.getInstance(context!!)))
         CoroutineScope(Dispatchers.IO).launch{
             val serviceIntent = Intent(context, MyAlarmService::class.java)
@@ -84,7 +90,7 @@ class MySoundAlarmReceiver : BroadcastReceiver(){
     private suspend fun getCurrentWeather(lat:Double, long:Double)
     {
         Log.i("TAG", "getCurrentWeather: $language")
-        appRepo.getAllForecastData(lat,long, HomeFragment.API_KEY, lang = language ).collect(){
+        appRepo.getAllForecastData(lat,long, HomeFragment.API_KEY, lang = language!! ).collect(){
             weatherData=it
         }
     }

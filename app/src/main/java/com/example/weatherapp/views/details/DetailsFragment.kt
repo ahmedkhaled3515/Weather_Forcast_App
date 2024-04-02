@@ -30,17 +30,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.weatherapp.ApiState
 import com.example.weatherapp.R
+import com.example.weatherapp.SettingsSharedPreferences
 import com.example.weatherapp.ViewModel.CurrentForecastViewModel
 import com.example.weatherapp.ViewModel.CurrentForecastViewModelFactory
 import com.example.weatherapp.ViewModel.SharedSettingsViewModel
 import com.example.weatherapp.WeatherSharedPreferences
 import com.example.weatherapp.database.AppDatabase
 import com.example.weatherapp.database.LocalDataSource
-import com.example.weatherapp.language
 import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.WeatherResponse
 import com.example.weatherapp.network.RemoteDataSource
-import com.example.weatherapp.units
 import com.example.weatherapp.views.home.FiveDaysForecastAdapter
 import com.example.weatherapp.views.home.HourlyForecastListAdapter
 import com.google.android.gms.location.LocationCallback
@@ -67,6 +66,9 @@ class DetailsFragment : Fragment() {
         const val API_KEY="172e0cbb3264b27530f5b6c425ffb29d"
     }
     //    private var language = "en"
+    private var language : String? = "en"
+    private var units : String? = "metric"
+    private lateinit var settingsSharedPreferences: SettingsSharedPreferences
     private lateinit var layout: ConstraintLayout
     var currentLat:Double?=null
     var currentLon:Double?=null
@@ -89,6 +91,9 @@ class DetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        settingsSharedPreferences = SettingsSharedPreferences
+        language = settingsSharedPreferences.getLanguage(requireContext())
+        units = settingsSharedPreferences.getUnits(requireContext())
         // Inflate the layout for this fragment
         viewModel = ViewModelProvider(this, CurrentForecastViewModelFactory(
             AppRepository.getInstance(
@@ -102,8 +107,8 @@ class DetailsFragment : Fragment() {
             val type = bundle.getString("type")
             currentLat = bundle.getDouble("lat")
             currentLon = bundle.getDouble("long")
-            viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY, units = units,
-                language
+            viewModel.getForecastResponse(currentLat!!,currentLon!!, API_KEY, units = units!!,
+                language!!
             )
         }
         weatherSharedPreferences = WeatherSharedPreferences
