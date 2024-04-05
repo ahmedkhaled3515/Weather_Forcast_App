@@ -3,6 +3,7 @@ package com.example.weatherapp.database
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.filters.SmallTest
 import com.example.weatherapp.model.LocationAlert
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.first
@@ -13,7 +14,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.util.Calendar
-
+@SmallTest
 class AlertDaoTest {
     @get:Rule
     val rule = InstantTaskExecutorRule()

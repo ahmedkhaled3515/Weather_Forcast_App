@@ -139,6 +139,7 @@ class HomeFragment : Fragment() {
         dailyRV=view.findViewById(R.id.days_RV)
         screen = view.findViewById(R.id.screen)
         progress=view.findViewById(R.id.lottieAnimationView)
+        progress.playAnimation()
     }
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -161,10 +162,11 @@ class HomeFragment : Fragment() {
                         is ApiState.Failure ->{
                             if(weatherSharedPreferences.getWeatherResponse(requireContext()) != null)
                             {
-                                weatherSharedPreferences.getWeatherResponse(requireContext())
-                                    ?.let { it1 -> setUiComponents(it1) }
+                                val weatherResponse =weatherSharedPreferences.getWeatherResponse(requireContext())
+                                setUiComponents(weatherResponse!!)
                                 Toast.makeText(requireActivity(),"No Internet Offline Mode",Toast.LENGTH_SHORT).show()
                                 progress.visibility = View.GONE
+                                screen.visibility =View.VISIBLE
                             }
                             else{
                                 Toast.makeText(requireActivity(), "Failed", Toast.LENGTH_SHORT).show()
@@ -175,6 +177,7 @@ class HomeFragment : Fragment() {
                         }
                         else -> {
                             progress.visibility = View.VISIBLE
+                            progress.playAnimation()
                             screen . visibility = View.GONE
                             Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
                         }

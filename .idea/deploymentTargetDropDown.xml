@@ -2,6 +2,12 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="AlertDaoTest">
+        <State />
+      </entry>
+      <entry key="LocalDataSourceTest">
+        <State />
+      </entry>
       <entry key="app">
         <State />
       </entry>

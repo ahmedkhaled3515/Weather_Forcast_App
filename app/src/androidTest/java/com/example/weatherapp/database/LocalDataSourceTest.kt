@@ -3,6 +3,7 @@ package com.example.weatherapp.database
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.filters.MediumTest
 import com.example.weatherapp.model.FavoriteCoordinate
 import com.example.weatherapp.model.LocationAlert
 import kotlinx.coroutines.flow.first
@@ -14,6 +15,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.util.Calendar
+@MediumTest
 class LocalDataSourceTest {
     @get:Rule
     val rule = InstantTaskExecutorRule()
