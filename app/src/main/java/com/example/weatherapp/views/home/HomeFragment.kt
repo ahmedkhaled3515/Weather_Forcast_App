@@ -43,6 +43,8 @@ import com.example.weatherapp.ViewModel.SharedSettingsViewModel
 import com.example.weatherapp.WeatherSharedPreferences
 import com.example.weatherapp.database.AppDatabase
 import com.example.weatherapp.database.LocalDataSource
+import com.example.weatherapp.databinding.FragmentFavoriteBinding
+import com.example.weatherapp.databinding.NavHeaderMainBinding
 import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.WeatherResponse
 import com.example.weatherapp.network.RemoteDataSource
@@ -51,8 +53,10 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.text.NumberFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -84,11 +88,13 @@ class HomeFragment : Fragment() {
     private val sharedSettingsViewModel : SharedSettingsViewModel by activityViewModels()
     private lateinit var weatherSharedPreferences : WeatherSharedPreferences
     private lateinit var settingsSharedPreferences: SettingsSharedPreferences
-    private lateinit var navView:View
+    private lateinit var navView:NavigationView
+    private lateinit var headerBinding : NavHeaderMainBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+//        headerBinding = NavHeaderMainBinding.inflate(bi)
         settingsSharedPreferences = SettingsSharedPreferences
 //        settingsSharedPreferences.saveLanguage(requireContext(),"en")
 //        settingsSharedPreferences.saveUnits(requireContext(),"metric")
@@ -120,13 +126,15 @@ class HomeFragment : Fragment() {
         }
         weatherSharedPreferences = WeatherSharedPreferences
         sharedPreferences = requireActivity().getSharedPreferences("myShared",Context.MODE_PRIVATE)
-        navView = inflater.inflate(R.layout.nav_header_main,container,false)
+//        navView = inflater.inflate(R.layout.nav_header_main,container,false)
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
 
     private fun initializeComponents(view: View)
     {
+
+
         currentDegreeTV=view.findViewById(R.id.degree_text)
         currentDescriptionTV=view.findViewById(R.id.weather_text)
         windSpeedTV=view.findViewById(R.id.wind_speed_text)
@@ -143,8 +151,9 @@ class HomeFragment : Fragment() {
     }
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        (activity as MainActivity2).updateActionBarTitle("Your Fragment Title")
         initializeComponents(view)
+
+//        (activity as MainActivity2).updateActionBarTitle("Your Fragment Title")
 //        viewModel= ViewModelProvider(this)[CurrentForecastViewModel::class.java]
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED){
@@ -177,7 +186,6 @@ class HomeFragment : Fragment() {
                         }
                         else -> {
                             progress.visibility = View.VISIBLE
-                            progress.playAnimation()
                             screen . visibility = View.GONE
                             Toast.makeText(requireActivity(),"Loading",Toast.LENGTH_SHORT).show()
                         }
@@ -217,34 +225,44 @@ class HomeFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun setUiComponents(weatherResponse: WeatherResponse)
     {
+        val locale = Locale.getDefault()
+        val numberFormat = NumberFormat.getInstance(locale)
         val forecast = weatherResponse.current
         Log.i("TAG", "setUiComponents: $weatherResponse")
+        var tempUnit="°c"
+        var windUnit = "M/S"
+        if(locale.language == "ar")
+        {
+            tempUnit="مئوية"
+            windUnit = "متر/ثانية"
+        }
+
         if (units == "metric")
         {
-            currentDegreeTV.text="${forecast.temp}°c"
-            windSpeedTV.text="${forecast.windSpeed}M/S"
+            currentDegreeTV.text="${numberFormat.format(forecast.temp)}°c"
+            windSpeedTV.text="${numberFormat.format(forecast.windSpeed)}$windUnit"
         }
         else if (units == "imperial")
         {
-            currentDegreeTV.text="${forecast.temp}°F"
-            windSpeedTV.text="${forecast.windSpeed}M/H"
+            currentDegreeTV.text="${numberFormat.format(forecast.temp)}°F"
+            windSpeedTV.text="${numberFormat.format(forecast.windSpeed)}M/H"
         }
         else{
-            currentDegreeTV.text="${forecast.temp}°K"
-            windSpeedTV.text="${forecast.windSpeed}M/S"
+            currentDegreeTV.text="${numberFormat.format(forecast.temp)}°K"
+            windSpeedTV.text="${numberFormat.format(forecast.windSpeed)}M/S"
         }
 
         currentDescriptionTV.text=forecast.weather[0].description
 
         rainChanceTV.text= forecast.rain?.toString()?:getString(R.string.no_chance)
-        pressureTV.text=forecast.pressure.toString()
-        humidityTV.text=forecast.humidity.toString()
+        pressureTV.text=numberFormat.format(forecast.pressure).toString()
+        humidityTV.text=numberFormat.format(forecast.humidity).toString()
         locationText.text=weatherResponse.timezone
 //        getAddressWithCoordinates(forecast.coord.lat.toDouble(),forecast.coord.lon.toDouble())
         Glide.with(this)
             .load("https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png")
             .into(weatherIcon)
-
+        drawerHeader()
         dailyRV.apply {
             layoutManager= LinearLayoutManager(context).apply {
                 orientation= LinearLayoutManager.VERTICAL
@@ -335,4 +353,9 @@ class HomeFragment : Fragment() {
             requireActivity().recreate()
         }
     }
+    private fun drawerHeader()
+    {
+        (activity as MainActivity2).updateNavigationHeader()
+    }
+
 }

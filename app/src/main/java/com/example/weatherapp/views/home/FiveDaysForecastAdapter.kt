@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import com.example.weatherapp.R
 import com.example.weatherapp.SettingsSharedPreferences
 import com.example.weatherapp.model.DailyWeather
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -42,18 +43,22 @@ class FiveDaysForecastAdapter(val context: Context) : ListAdapter<DailyWeather, 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val forecast= getItem(position)
         val calendar=Calendar.getInstance()
+        val locale = Locale.getDefault()
+        val numberFormat = NumberFormat.getInstance(locale)
         calendar.timeInMillis= forecast.dt*1000
         holder.dayText.text= getDayName(calendar).substring(0,3).uppercase()
         holder.dayDesc.text= forecast.weather[0].description
+        val max = numberFormat.format(forecast.temp.max)
+        val min = numberFormat.format(forecast.temp.min)
         if (units == "metric")
         {
-            holder.dayMinMaxTemp.text= "${forecast.temp.max}/${forecast.temp.min}°C"
+            holder.dayMinMaxTemp.text= "${max}/${min}°C"
         }
         else if (units == "imperial")
         {
-            holder.dayMinMaxTemp.text= "${forecast.temp.max}/${forecast.temp.min}°F"        }
+            holder.dayMinMaxTemp.text= "${max}/${min}°F"        }
         else{
-            holder.dayMinMaxTemp.text= "${forecast.temp.max}/${forecast.temp.min}°K"        }
+            holder.dayMinMaxTemp.text= "${max}/${min}°K"        }
 
         Glide.with(context)
             .load("https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png")

@@ -6,21 +6,27 @@
         android:title="@string/home_text"
         android:id="@+id/homeFragment"
         android:icon="@drawable/home_icon"
+        android:checkable="true"
         />
     <item
         android:id="@+id/favoriteFragment"
         android:title="@string/favorite_text"
         android:icon="@drawable/favorite"
+        android:checkable="true"
         />
     <item
         android:title="@string/alerts"
         android:id="@+id/alertFragment"
         android:icon="@drawable/alert"
+        android:checkable="true"
+
         />
     <item
         android:title="@string/settings_text"
         android:id="@+id/settingsFragment"
         android:icon="@drawable/settings_icon"
+        android:checkable="true"
+
         />
 
 

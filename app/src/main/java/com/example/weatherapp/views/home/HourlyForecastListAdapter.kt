@@ -19,10 +19,12 @@ import com.example.weatherapp.R
 import com.example.weatherapp.SettingsSharedPreferences
 import com.example.weatherapp.model.DailyWeather
 import com.example.weatherapp.model.HourlyWeather
+import java.text.NumberFormat
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
 
 class HourlyForecastListAdapter(val context: Context) : ListAdapter<HourlyWeather, HourlyForecastListAdapter.ViewHolder>(HourlyWeatherDiffUtil()) {
     private lateinit var settingSharedPreferences: SettingsSharedPreferences
@@ -51,13 +53,16 @@ class HourlyForecastListAdapter(val context: Context) : ListAdapter<HourlyWeathe
         var date = timestampToDate(forecast.dt)
         val calendar=Calendar.getInstance()
         calendar.time=date
+        val locale = Locale.getDefault()
+        val numberFormat = NumberFormat.getInstance(locale)
         val period : String= if(calendar.get(Calendar.AM_PM) == 0)
         {
-            "AM"
+            context.getString(R.string.AM)
         }
         else{
-            "PM"
+            context.getString(R.string.PM)
         }
+
         if (Calendar.getInstance().get(Calendar.DATE) == calendar.get(Calendar.DATE)){
             Log.i("TAG", "setCardContent: true ")
         }else
@@ -68,22 +73,22 @@ class HourlyForecastListAdapter(val context: Context) : ListAdapter<HourlyWeathe
         Log.i("TAG", "onBindViewHolder: ${forecast.dt}")
         if (units == "metric")
         {
-            holder.hourlyDegree.text= "${forecast.temp}°C"
+            holder.hourlyDegree.text= "${numberFormat.format(forecast.temp)}°C"
         }
         else if (units == "imperial")
         {
-            holder.hourlyDegree.text= "${forecast.temp}°F"
+            holder.hourlyDegree.text= "${numberFormat.format(forecast.temp)}°F"
         }
         else{
-            holder.hourlyDegree.text= "${forecast.temp}°K"
+            holder.hourlyDegree.text= "${numberFormat.format(forecast.temp)}°K"
         }
 
         holder.timeTV.text= if(calendar.get(Calendar.HOUR) == 0)
         {
-           "12 $period"
+           "${numberFormat.format(12)} $period"
         }
         else{
-             "${calendar.get(Calendar.HOUR)} $period"
+             "${numberFormat.format(calendar.get(Calendar.HOUR))} $period"
         }
         Glide.with(context)
             .load("https://openweathermap.org/img/wn/${forecast.weather[0].icon}@2x.png")

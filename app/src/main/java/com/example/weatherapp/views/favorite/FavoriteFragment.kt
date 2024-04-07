@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -27,6 +28,8 @@ import com.example.weatherapp.model.AppRepository
 import com.example.weatherapp.model.FavoriteCoordinate
 import com.example.weatherapp.network.RemoteDataSource
 import kotlinx.coroutines.launch
+import java.text.NumberFormat
+import java.util.Locale
 
 /**
  * A simple [Fragment] subclass.
@@ -81,6 +84,8 @@ class FavoriteFragment : Fragment() {
     }
     private fun setRecyclerView()
     {
+        val locale = Locale.getDefault()
+        val numberFormat = NumberFormat.getInstance(locale)
         binding.favoriteRV.apply {
             layoutManager= LinearLayoutManager(this.context).apply {
                 orientation= LinearLayoutManager.VERTICAL
@@ -91,6 +96,15 @@ class FavoriteFragment : Fragment() {
             {
                 favoriteViewModel.favoriteFlow.collect(){
                     binding.favoriteRV.apply {
+                        val text = if(it.size > 0)
+                        {
+                            "${getString(R.string.item_count)} ${numberFormat.format(it.size)}"
+                        }
+                        else
+                        {
+                            getString(R.string.no_item)
+                        }
+                        binding.itemCount.text = text
                         adapter= FavoriteAdapter(requireContext(), ::removeLocation,::goToDetails).apply {
                             submitList(it)
                         }

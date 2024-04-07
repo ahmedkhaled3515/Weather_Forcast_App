@@ -35,6 +35,8 @@ import com.example.weatherapp.model.LocationAlert
 import com.example.weatherapp.network.RemoteDataSource
 import com.example.weatherapp.sevices.MySoundAlarmReceiver
 import kotlinx.coroutines.launch
+import java.text.NumberFormat
+import java.util.Locale
 
 
 class AlertFragment : Fragment() {
@@ -121,6 +123,8 @@ class AlertFragment : Fragment() {
     }
     private fun setRecyclerView()
     {
+        val locale = Locale.getDefault()
+        val numberFormat = NumberFormat.getInstance(locale)
         binding.alertRV.apply {
             layoutManager = LinearLayoutManager(context).apply {
                 orientation = LinearLayoutManager.VERTICAL
@@ -130,6 +134,15 @@ class AlertFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED)
             {
                 alertViewModel.alertFlow.collect(){
+                    val text = if(it.isNotEmpty())
+                    {
+                        "${getString(R.string.item_count)} ${numberFormat.format(it.size)}"
+                    }
+                    else
+                    {
+                        getString(R.string.no_item)
+                    }
+                    binding.itemCount.text = text
                     binding.alertRV.apply {
                         adapter= AlertAdapter(context, ::remove).apply {
                             submitList(it)

@@ -51,6 +51,9 @@ android {
 
 
 dependencies {
+    //translation
+
+    //lottie
     implementation ("com.airbnb.android:lottie:4.2.0")
 
     //AndroidX

@@ -4,4 +4,15 @@
         <item name="color">#FFFFFF</item>
         <item name="fontStyle">italic</item>
     </style>
+    <style name="roundUpperCard">
+
+        <item name="cornerSizeBottomLeft">20dp</item>
+        <item name="cornerSizeBottomRight">20dp</item>
+        <item name="color">@color/white</item>
+    </style>
+    <style name="TransparentActionBar" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@android:color/transparent</item>
+        <!-- If using AppCompat, include the following line as well -->
+        <item name="background">@android:color/transparent</item>
+    </style>
 </resources>

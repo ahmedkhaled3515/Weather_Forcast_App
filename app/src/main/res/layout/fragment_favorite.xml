@@ -7,6 +7,17 @@
     android:layout_height="match_parent"
     tools:context=".views.favorite.FavoriteFragment">
 
+    <TextView
+        android:id="@+id/item_count"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#C38A9D"
+        android:text="@string/item_count"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favorite_RV"
         android:layout_width="0dp"
@@ -14,7 +25,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/item_count"
         tools:listitem="@layout/recycler_view_item_1" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

@@ -30,4 +30,11 @@
     <string name="maps">الخريطة</string>
     <string name="no_chance">لا يوجد</string>
     <string name="details_text">التفاصيل</string>
+    <string name="hourly_forecast">توقعات كل ساعة</string>
+    <string name="day_forecast">توقعات الأيام</string>
+    <string name="AM">ص</string>
+    <string name="PM">م</string>
+    <string name="item_count">العدد</string>
+    <string name="no_item">القائمة فارغة</string>
+
 </resources>

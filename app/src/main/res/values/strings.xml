@@ -41,4 +41,11 @@
     <string name="maps">Map</string>
     <string name="no_chance">No Chance</string>
     <string name="details_text">Details</string>
+    <string name="hourly_forecast">Hourly Forecast</string>
+    <string name="day_forecast">Day Forecast</string>
+    <string name="temp_unit">°c</string>
+    <string name="AM">AM</string>
+    <string name="PM">PM</string>
+    <string name="item_count">Item Count</string>
+    <string name="no_item">No Items</string>
 </resources>

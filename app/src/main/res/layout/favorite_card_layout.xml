@@ -18,17 +18,24 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="TextView"
+            android:textColor="@color/customDialogButtonNegative"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <ImageView
             android:id="@+id/favorit_remove_button"
-            android:layout_width="wrap_content"
+            android:layout_width="50dp"
             android:layout_height="wrap_content"
             android:background="@drawable/button_back_ground"
-            android:backgroundTint="#C89999"
+            android:backgroundTint="#F44336"
+            android:gravity="center"
+            android:shadowColor="#9C4B4B"
+            android:src="@drawable/close_24px"
             android:text="@string/remove_button_text"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textColorHighlight="@color/design_default_color_secondary"
             app:layout_constraintBottom_toBottomOf="@+id/favorite_location_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/favorite_location_name"

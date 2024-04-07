@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import com.example.weatherapp.MainActivity2
 import com.example.weatherapp.R
 import com.example.weatherapp.SettingsSharedPreferences
 import com.example.weatherapp.ViewModel.SharedSettingsViewModel
@@ -42,6 +43,7 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initializeUI()
         languageSwitch()
         temperatureSwitch()
         locationSwitch(view)
@@ -53,8 +55,42 @@ class SettingsFragment : Fragment() {
             activity?.recreate()
         }
     }
+    private fun initializeUI()
+    {
+        val initUnit = settingsSharedPreferences.getUnits(requireContext())
+        val initLang = settingsSharedPreferences.getLanguage(requireContext())
+        val initLocation = settingsSharedPreferences.getLocations(requireContext())
+        if(initLocation == "gps")
+        {
+            binding.gpsRadioButton.isChecked=true
+        }
+        else
+        {
+            binding.mapRadioButton.isChecked=true
+        }
+        if(initLang == "en")
+        {
+            binding.englishRadioButton.isChecked= true
+        }
+        else
+        {
+            binding.arabicRadioButton.isChecked = true
+        }
+        if(initUnit == "metric")
+        {
+            binding.celsiusRadioButton.isChecked = true
+        }
+        else if ( initUnit == "standard")
+        {
+            binding.kelvinRadioButton.isChecked=true
+        }
+        else{
+            binding.fahrenhietRadioButton.isChecked=true
+        }
+    }
     private fun locationSwitch(view : View)
     {
+        binding.gpsRadioButton.isChecked=true
         binding.locationRadioGroup.setOnCheckedChangeListener { group, checkedId ->
             when(checkedId){
                 binding.gpsRadioButton.id->{
@@ -80,14 +116,13 @@ class SettingsFragment : Fragment() {
 
         binding.languageRadioGroup.setOnCheckedChangeListener(){ radioGroup: RadioGroup, id: Int ->
             when (id) {
-
                 binding.arabicRadioButton.id -> {
-                    Toast.makeText(requireContext(), "Arabic", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(requireContext(), "Arabic", Toast.LENGTH_SHORT).show()
                     lang = "ar"
                     settingsSharedPreferences.saveLanguage(requireContext(),"ar")
                 }
                 binding.englishRadioButton.id -> {
-                    Toast.makeText(requireContext(), "English", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(requireContext(), "English", Toast.LENGTH_SHORT).show()
                     lang ="en"
                     settingsSharedPreferences.saveLanguage(requireContext(),"en")
                 }
@@ -100,18 +135,18 @@ class SettingsFragment : Fragment() {
             when(id){
                 binding.celsiusRadioButton.id -> {
 
-                    Toast.makeText(requireContext(), "Celsius", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(requireContext(), "Celsius", Toast.LENGTH_SHORT).show()
                     unit = "metric"
                     settingsSharedPreferences.saveUnits(requireContext(),"metric")
                 }
                 binding.kelvinRadioButton.id->{
-                    Toast.makeText(requireContext(), "Kelvin", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(requireContext(), "Kelvin", Toast.LENGTH_SHORT).show()
                     unit = "standard"
                     settingsSharedPreferences.saveUnits(requireContext(),"standard")
 
                 }
                 binding.fahrenhietRadioButton.id->{
-                    Toast.makeText(requireContext(), "Fahrenheit", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(requireContext(), "Fahrenheit", Toast.LENGTH_SHORT).show()
                     unit = "imperial"
                     settingsSharedPreferences.saveUnits(requireContext(),"imperial")
 
@@ -123,7 +158,7 @@ class SettingsFragment : Fragment() {
         val locale = Locale(languageCode)
         Locale.setDefault(locale)
 
-        val config = Configuration(resources.configuration)
+        val config = Configuration()
         config.setLocale(locale)
 
         resources.updateConfiguration(config, resources.displayMetrics)
