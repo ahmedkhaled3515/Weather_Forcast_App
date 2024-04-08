@@ -1,6 +1,7 @@
 package com.example.weatherapp.views.home
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,6 +51,7 @@ class FiveDaysForecastAdapter(val context: Context) : ListAdapter<DailyWeather, 
         holder.dayDesc.text= forecast.weather[0].description
         val max = numberFormat.format(forecast.temp.max)
         val min = numberFormat.format(forecast.temp.min)
+        Log.i("TAG", "onBindViewHolder: $units")
         if (units == "metric")
         {
             holder.dayMinMaxTemp.text= "${max}/${min}°C"

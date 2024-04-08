@@ -11,11 +11,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.R
+import com.example.weatherapp.SettingsSharedPreferences
 import com.example.weatherapp.databinding.FavoriteCardLayoutBinding
 import com.example.weatherapp.model.FavoriteCoordinate
 class FavoriteAdapter(val context: Context , val removeLocation: (coord:FavoriteCoordinate)-> Unit,val goToDetails : (coord:FavoriteCoordinate)-> Unit) : ListAdapter<FavoriteCoordinate, FavoriteAdapter.ViewHolder>(
     FavoriteCoordinateDiffUtil()
 ) {
+
     class ViewHolder(val binding: FavoriteCardLayoutBinding ) : RecyclerView.ViewHolder(binding.root){
 
     }
@@ -23,6 +25,7 @@ class FavoriteAdapter(val context: Context , val removeLocation: (coord:Favorite
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = FavoriteCardLayoutBinding.inflate(inflater,parent,false)
+
         return ViewHolder(binding)
     }
 
